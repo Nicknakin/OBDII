@@ -1,5 +1,9 @@
 GROUP Members
 1. Chance Huddleston
+2. Zain Khan
+3. Leonardo Hernandez
+4. Zaky Qalawi
+5. Nick Kinney
 
 
 OBD-II Project Sprint 1 Goals
