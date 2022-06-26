@@ -1,3 +1,7 @@
+GROUP Members
+1. Chance Huddleston
+
+
 OBD-II Project Sprint 1 Goals
 - Gain domain knowledge
 - Plan general architecture
