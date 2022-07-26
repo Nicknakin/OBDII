@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="15.0.0">
+  <zoom_level>10</zoom_level>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>860</x>
+      <y>440</y>
+      <w>220</w>
+      <h>140</h>
+    </coordinates>
+    <panel_attributes>Car
+fg=white
+bg=black
+layer=0</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>900</x>
+      <y>480</y>
+      <w>150</w>
+      <h>60</h>
+    </coordinates>
+    <panel_attributes>Controller Computer
+bg=#14BA46
+layer=1
+valign=center</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>
