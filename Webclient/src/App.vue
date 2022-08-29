@@ -8,6 +8,9 @@
     <body class="h-full">
     ```
   -->
+
+  <SideBar>
+
   <div>
     <TransitionRoot as="template" :show="sidebarOpen">
       <Dialog as="div" class="relative z-40 md:hidden" @close="sidebarOpen = false">
@@ -37,19 +40,6 @@
                   </a>
                 </nav>
               </div>
-              <div class="flex-shrink-0 flex bg-gray-700 p-4">
-                <a href="#" class="flex-shrink-0 group block">
-                  <div class="flex items-center">
-                    <div>
-                      <img class="inline-block h-10 w-10 rounded-full" src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="" />
-                    </div>
-                    <div class="ml-3">
-                      <p class="text-base font-medium text-white">Tom Cook</p>
-                      <p class="text-sm font-medium text-gray-400 group-hover:text-gray-300">View profile</p>
-                    </div>
-                  </div>
-                </a>
-              </div>
             </DialogPanel>
           </TransitionChild>
           <div class="flex-shrink-0 w-14">
@@ -73,19 +63,6 @@
               {{ item.name }}
             </a>
           </nav>
-        </div>
-        <div class="flex-shrink-0 flex bg-gray-700 p-4">
-          <a href="#" class="flex-shrink-0 w-full group block">
-            <div class="flex items-center">
-              <div>
-                <img class="inline-block h-9 w-9 rounded-full" src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="" />
-              </div>
-              <div class="ml-3">
-                <p class="text-sm font-medium text-white">Tom Cook</p>
-                <p class="text-xs font-medium text-gray-300 group-hover:text-gray-200">View profile</p>
-              </div>
-            </div>
-          </a>
         </div>
       </div>
     </div>
@@ -115,26 +92,21 @@
 </template>
 
 <script setup>
+import SideBar from 'SideBar.vue'
 import { ref } from 'vue'
 import { Dialog, DialogPanel, TransitionChild, TransitionRoot } from '@headlessui/vue'
 import {
-  CalendarIcon,
-  ChartBarIcon,
-  FolderIcon,
+  CodeIcon,
+  DatabaseIcon,
   HomeIcon,
-  InboxIcon,
   MenuIcon,
-  UsersIcon,
   XIcon,
 } from '@heroicons/vue/outline'
 
 const navigation = [
   { name: 'Dashboard', href: '#', icon: HomeIcon, current: true },
-  { name: 'Team', href: '#', icon: UsersIcon, current: false },
-  { name: 'Projects', href: '#', icon: FolderIcon, current: false },
-  { name: 'Calendar', href: '#', icon: CalendarIcon, current: false },
-  { name: 'Documents', href: '#', icon: InboxIcon, current: false },
-  { name: 'Reports', href: '#', icon: ChartBarIcon, current: false },
+  { name: 'Send A Custom Query', href: '#', icon: CodeIcon, current: false },
+  { name: 'View Database Query History', href: '#', icon: DatabaseIcon, current: false },
 ]
 
 const sidebarOpen = ref(false)
