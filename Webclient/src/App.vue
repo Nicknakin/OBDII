@@ -9,7 +9,7 @@
     ```
   -->
 
-  <SideBar>
+  <SideBar/>
 
   <div>
     <TransitionRoot as="template" :show="sidebarOpen">
@@ -92,7 +92,7 @@
 </template>
 
 <script setup>
-import SideBar from 'SideBar.vue'
+import SideBar from '@/components/SideBar.vue'
 import { ref } from 'vue'
 import { Dialog, DialogPanel, TransitionChild, TransitionRoot } from '@headlessui/vue'
 import {
