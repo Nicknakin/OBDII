@@ -4,7 +4,7 @@
       <!-- Sidebar component, swap this element with another sidebar if you like -->
       <div class="flex flex-grow flex-col bg-indigo-700 pt-5">
         <div class="flex flex-shrink-0 items-center px-4">
-          <img class="h-16 w-auto m-auto" src="@/assets/Debuggy-logos_black.png" alt="Debuggy" />
+          <img class="h-16 w-auto m-auto" src="@/assets/Debuggy-logos_white.png" alt="Debuggy" />
         </div>
         <div class="mt-5 flex flex-1 flex-col">
           <nav class="flex-1 space-y-1 px-2 pb-4">
