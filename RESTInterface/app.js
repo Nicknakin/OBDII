@@ -18,7 +18,7 @@ app.get("/full-dump", (_req, res) => {
     const response = {
       code,
       signal,
-      response: str
+      diagnostics: [["name", "thing"], ["name2", "thing2"]]//str
     };
     console.log(response);
     res.end(JSON.stringify(response));

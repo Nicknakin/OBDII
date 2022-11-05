@@ -11,9 +11,10 @@
           </div>
           <div class="mx-auto max-w-7xl px-4 sm:px-6 md:px-8">
             <!-- Replace with your content -->
-            <div class="py-4">
-              <div class="h-96 rounded-lg border-4 border-dashed border-gray-200" />
-            </div>
+              <div v-for="diagnostic in diagnostics" :key="diagnostic[0]" class="diagnostic">
+                <p> {{ diagnostic[0] }} </p>
+                <p> {{ diagnostic[1] }} </p>
+              </div>
             <!-- /End replace -->
           </div>
         </div>
@@ -24,5 +25,24 @@
 
 <script setup>
 import SideBar from "@/components/SideBar.vue";
+</script>
 
+<script>
+  export default {
+    name: "DashBoard",
+    data() {
+      return {
+        diagnostics: [],
+      };
+    },
+    created(){
+      console.log(`${location.protocol}//${location.host}/api/full-dump`);
+      fetch(`${location.protocol}//${location.host}/api/full-dump`)
+      .then(response => response.json())
+      .then(data => {
+        data.diagnostics.forEach(diagnostic => this.diagnostics.push(diagnostic));
+        console.log("I got some data!". data);
+      });
+    }
+  };
 </script>
