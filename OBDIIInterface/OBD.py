@@ -22,6 +22,7 @@ import json
 import can
 from ctypes import *
 from ctypes.util import find_library
+import os
 
 ############## PARSE CLI COMMANDS ##############
 parser = argparse.ArgumentParser(description= "OBD2 Test Program")
@@ -44,11 +45,12 @@ if(DEBUG):
 ########################################################################
 
 # get a handle to the library
-libPath = find_library('obdii')
-if(libPath):
-    obdii = CDLL(libPath)
-else:
-    exit("obdii library not found")
+path = "./obdii-py/build/libobdii.so"
+#libPath = find_library(path)
+obdii = CDLL(path)
+    
+if(not obdii):
+    exit("obdii library not found.\t{0}".format(path))
 
 class OBDIISocket(Structure):
     _fields_ = [
