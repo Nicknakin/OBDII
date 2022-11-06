@@ -47,9 +47,9 @@ if(DEBUG):
 # get a handle to the library
 path = "./obdii-py/build/libobdii.so"
 #libPath = find_library(path)
-obdii = CDLL(path)
-    
-if(not obdii):
+try:
+    obdii = CDLL(path)
+except:
     exit("obdii library not found.\t{0}".format(path))
 
 class OBDIISocket(Structure):
