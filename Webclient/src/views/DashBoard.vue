@@ -16,8 +16,8 @@
                 <div class="text-center" v-for="diagnostic in diagnostics" :key="diagnostic[0]">
                   <div class="overflow-hidden rounded-xl ">
                     <ul role="list" class="divide-y divide-gray-700 break-words">
-                      <li class="bg-gray-500"> {{ diagnostic.name}} </li>
-                      <li class="bg-gray-400" > {{ diagnostic.value}} </li>
+                      <li class="bg-gray-500 p-2"> {{ diagnostic.name}} </li>
+                      <li class="bg-gray-400 p-1" > {{ diagnostic.value}} </li>
                     </ul>
                   </div>
                 </div>
