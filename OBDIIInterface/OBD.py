@@ -21,8 +21,6 @@ collections.Callable = collections.abc.Callable
 import json
 import can
 from ctypes import *
-from ctypes.util import find_library
-import os
 
 ############## PARSE CLI COMMANDS ##############
 parser = argparse.ArgumentParser(description= "OBD2 Test Program")
@@ -46,11 +44,10 @@ if(DEBUG):
 
 # get a handle to the library
 path = "./obdii-py/build/libobdii.so"
-#libPath = find_library(path)
 try:
     obdii = CDLL(path)
 except:
-    exit("obdii library not found.\t{0}".format(path))
+    exit("obdii library not found.\nCheck for directory\t{0}".format(path))
 
 class OBDIISocket(Structure):
     _fields_ = [
@@ -265,9 +262,13 @@ CAN_EFF_FLAG = 0x80000000
 ##########################################################
 #Create a connection for use of API Queries
 print("Establishing connection...")
-#Print all possible ports
-
-
+try:
+    #Open a daemon query for multiple shared instances
+    socket = obdii.OBDIIOpenSocket(shared = 1)
+    if(DEBUG):
+        print("DEBUG/Socket: ",socket)
+except: 
+    print("Connection Error")
 
 '''
 bus = can.interface.Bus(channel='can0', bustype='socketcan')
