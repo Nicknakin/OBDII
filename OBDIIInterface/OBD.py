@@ -262,13 +262,13 @@ CAN_EFF_FLAG = 0x80000000
 ##########################################################
 #Create a connection for use of API Queries
 print("Establishing connection...")
-try:
-    #Open a daemon query for multiple shared instances
-    socket = obdii.OBDIIOpenSocket(shared = 1)
-    if(DEBUG):
-        print("DEBUG/Socket: ",socket)
-except: 
-    print("Connection Error")
+#try:
+#Open a daemon query for multiple shared instances
+socket = obdii.OBDIIOpenSocket(ifname="socketcan",shared = 1)
+if(DEBUG):
+    print("DEBUG/Socket: ",socket)
+#except: 
+    #print("Connection Error")
 
 '''
 bus = can.interface.Bus(channel='can0', bustype='socketcan')
