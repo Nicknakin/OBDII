@@ -24,6 +24,7 @@ import json
 import datetime
 import csv
 import can
+import can.interfaces.vector
 from ctypes import *
 
 
