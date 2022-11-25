@@ -132,7 +132,7 @@ app.get("/manual-query", (req, res) => {
 
   //TODO Define handlers to built out output string and send response
 
-  //Log request and respond
+  //Log request and respond TODO Put inside of program exit handler
   logHistory({ endpoint: "/manual-query", time: new Date(), req, response });
   res.end(/*TODO Data goes here*/);
 });
@@ -148,3 +148,16 @@ app.get("/history", (req, res) => {
   res.end(/*TODO Data goes here*/);
 });
 
+//TODO Endpoint that gets the supported PIDS from the python program
+app.get("/supported-pids", (req, res) => {
+  //TODO Start python program with arguments to get supported pids
+
+  //TODO Prepare output string
+
+  //TODO Define handlers for python program
+
+  // Log request and respond TODO Put inside of program exit handler
+  logHistory({ endpoint: "/history", time: new Date(), req, response });
+  res.end(/*TODO Data goes here*/);
+
+});
