@@ -43,6 +43,8 @@
       };
     },
     created(){
+      //TODO This is working fine, but maybe throw it in to a set interval or something fancy so that the page updates.
+      // You could have a refresh button or refactor it to use a websocket connection
       console.log(`${location.protocol}//${location.host}/api/full-dump`);
       fetch(`${location.protocol}//${location.host}/api/full-dump`)
       .then(response => response.json())
