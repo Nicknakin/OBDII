@@ -297,13 +297,12 @@ print("Establishing connection...")
 
 bus = can.interface.Bus(channel='can0', bustype='socketcan',bitrate=bitrate)
 
-'''
+
 #Test message to determine if the connection was properly made
 msg= can.Message(arbitration_id=0x7de, data=[0, 25, 0, 1, 3, 1, 4, 1])
 bus.send(msg)
 
 notifier = can.Notifier(bus, [can.Printer()])
-'''
 ##########################################################
 ############## GET INFORMATION FROM VEHICLE ##############
 ##########################################################
@@ -320,7 +319,7 @@ def _output_message(message):
     """
     print(message)
     try:
-        output_file = log_folder + os.sep + "log"
+        output_file = log_folder + os.sep + "log.txt"
         statvfs = os.statvfs(log_folder)
         free_bytes = statvfs.f_frsize * statvfs.f_bfree
 
@@ -433,7 +432,6 @@ with open(csv_file_path, mode='r') as infile:
             minutes, seconds = divmod(rem, 60)
             if minutes >= 1:
                 timestamp = str(datetime.datetime.now())
-                log = {"timestamp": timestamp, "speed": speed, "rpm": rpm, "temperature": intake_air_temperature}
-                data = {"car_uuid": car_uuid, "log": log}
+                data = {"timestamp": timestamp, "speed": speed, "rpm": rpm, "temperature": intake_air_temperature}
                 if exfiltrate_data(data):
                     start = time.time()
