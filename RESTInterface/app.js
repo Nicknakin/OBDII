@@ -14,6 +14,8 @@ const server = app.listen(8081, function() {
   console.log("OBDII - REST Server listening at http://%s:%s", host, port);
 })
 
+let history = [];
+
 //TODO Endpoint to get all info from the car
 app.get("/full-dump", (req, res) => {
   //Spawn program
@@ -160,5 +162,8 @@ app.get("/supported-pids", (req, res) => {
   // Log request and respond TODO Put inside of program exit handler
   logHistory({ endpoint: "/history", time: new Date(), req, response });
   res.end(/*TODO Data goes here*/);
-
 });
+
+function logHistory(data) {
+  history.push(data);
+};
