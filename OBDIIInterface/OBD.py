@@ -304,7 +304,7 @@ CAN_EFF_FLAG = 0x80000000
 #Create a connection for use of API Queries
 print("Establishing connection...")
 
-bus = can.Bus(channel='can0', bustype='socketcan',bitrate=bitrate)
+bus = can.interface.Bus(channel='can0', bustype='socketcan',bitrate=bitrate)
 
 
 #Test message to determine if the connection was properly made
