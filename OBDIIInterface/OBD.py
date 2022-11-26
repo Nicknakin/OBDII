@@ -304,14 +304,14 @@ CAN_EFF_FLAG = 0x80000000
 #Create a connection for use of API Queries
 print("Establishing connection...")
 
-bus = can.interface.Bus(channel='can0', bustype='socketcan',bitrate=bitrate)
+bus = can.interface.Bus(channel='can0', bustype='socketcan')
 
 
 #Test message to determine if the connection was properly made
 msg= can.Message(arbitration_id=0x7de, data=[0, 25, 0, 1, 3, 1, 4, 1])
 bus.send(msg)
 
-notifier = can.Notifier(bus, [can.Printer()])
+#notifier = can.Notifier(bus, [can.Printer()])
 ##########################################################
 ############## GET INFORMATION FROM VEHICLE ##############
 ##########################################################
@@ -368,79 +368,77 @@ start = time.time()
 #Setup JSON output file
 csv_file_path = base_dir + os.sep +obd2_csv_file
 
-with open(csv_file_path, mode='r') as infile:
-            reader = csv.DictReader(infile)
-            for row in reader:
-                service_id = -1
-                pid = -1
-                description = ""
-                formula=""
-                enabled = False
-                if "Enabled" in row:
-                    enabled = bool(int(row["Enabled"]))
-                if enabled:
-                    if "Mode (hex)" in row:
-                        service_id = row["Mode (hex)"]
-                        service_int = int(service_id, 16)
-                    if "PID (hex)" in row:
-                        pid = row["PID (hex)"]
-                        pid_int = int(pid, 16)
-                    if "Description" in row:
-                        description = row["Description"]
-                    if "Formula" in row:
-                        formula = row["Formula"]
+if(REPORT):
+    with open(csv_file_path, mode='r') as infile:
+                reader = csv.DictReader(infile)
+                for row in reader:
+                    service_id = -1
+                    pid = -1
+                    description = ""
+                    formula=""
+                    enabled = False
+                    if "Enabled" in row:
+                        enabled = bool(int(row["Enabled"]))
+                    if enabled:
+                        if "Mode (hex)" in row:
+                            service_id = row["Mode (hex)"]
+                            service_int = int(service_id, 16)
+                        if "PID (hex)" in row:
+                            pid = row["PID (hex)"]
+                            pid_int = int(pid, 16)
+                        if "Description" in row:
+                            description = row["Description"]
+                        if "Formula" in row:
+                            formula = row["Formula"]
 
-                    if service_int >= 0 and pid_int >= 0:
-                        msg = can.Message(arbitration_id=0x7DF, data=[2, service_int, pid_int, 0, 0, 0, 0, 0], is_extended_id=False)
+                        if service_int >= 0 and pid_int >= 0:
+                            msg = can.Message(arbitration_id=0x7DF, data=[2, service_int, pid_int, 0, 0, 0, 0, 0], is_extended_id=False)
 
-                        try:
-                            bus.send(msg)
-                            time.sleep(0.5)
-                            for i in range(0, 2):
+                            try:
+                                bus.send(msg)
                                 time.sleep(0.5)
-                                response = bus.recv(timeout=2)
-                                if not response:
-                                    message = "No response from CAN bus. Service: {} PID: {} - {}".format(service_id.zfill(2), pid.zfill(2), description)
-                                    _output_message(message)
-                                    break
-                                if response:
-                                    received_pid = list(response.data)[2]
-                                    A = list(response.data)[3]
-                                    B = list(response.data)[4]
-                                    C = list(response.data)[5]
-                                    D = list(response.data)[6]
-                                    if service_id == "1":
-                                        if len(formula) > 0:
+                                for i in range(0, 2):
+                                    time.sleep(0.5)
+                                    response = bus.recv(timeout=2)
+                                    if not response:
+                                        message = "No response from CAN bus. Service: {} PID: {} - {}".format(service_id.zfill(2), pid.zfill(2), description)
+                                        _output_message(message)
+                                        break
+                                    if response:
+                                        received_pid = list(response.data)[2]
+                                        A = list(response.data)[3]
+                                        B = list(response.data)[4]
+                                        C = list(response.data)[5]
+                                        D = list(response.data)[6]
+                                        if service_id == "1":
+                                            if len(formula) > 0:
+                                                try:
+                                                    result = eval(formula)
+                                                    message = "{description}: {result}".format(description=description, result=result)
+                                                    _output_message(message)
+                                                    if pid_int == int(received_pid):
+                                                        if pid_int == int("0C", 16):
+                                                            rpm = result
+                                                        if pid_int == int("0D", 16):
+                                                            speed = result
+                                                        if pid_int == int("0F", 16):
+                                                            intake_air_temperature = result
+                                                except:
+                                                    _output_message("Unable to parse formula: {}.".format(formula))
+                                        if service_id == "9":
+                                            result = ""
                                             try:
-                                                result = eval(formula)
+                                                for c in list(response.data)[-3:]:
+                                                    result += chr(c)
                                                 message = "{description}: {result}".format(description=description, result=result)
                                                 _output_message(message)
-                                                if pid_int == int(received_pid):
-                                                    if pid_int == int("0C", 16):
-                                                        rpm = result
-                                                    if pid_int == int("0D", 16):
-                                                        speed = result
-                                                    if pid_int == int("0F", 16):
-                                                        intake_air_temperature = result
                                             except:
-                                                _output_message("Unable to parse formula: {}.".format(formula))
-                                    if service_id == "9":
-                                        result = ""
-                                        try:
-                                            for c in list(response.data)[-3:]:
-                                                result += chr(c)
-                                            message = "{description}: {result}".format(description=description, result=result)
-                                            _output_message(message)
-                                        except:
-                                            _output_message("Unable to parse response: {}.".format(response.data))
-                        except can.CanError:
-                            _output_message("CAN error")
+                                                _output_message("Unable to parse response: {}.".format(response.data))
+                            except can.CanError:
+                                _output_message("CAN error")
 
-            end = time.time()
-            hours, rem = divmod(end - start, 3600)
-            minutes, seconds = divmod(rem, 60)
-            if minutes >= exfiltrate_data_time:
-                timestamp = str(datetime.datetime.now())
-                data = {"timestamp": timestamp, "speed": speed, "rpm": rpm, "temperature": intake_air_temperature}
-                if exfiltrate_data(data):
-                    start = time.time()
+                end = time.time()
+                hours, rem = divmod(end - start, 3600)
+                minutes, seconds = divmod(rem, 60)
+                if minutes >= exfiltrate_data_time:
+                    timestamp = str(datetime.datetime.now())
