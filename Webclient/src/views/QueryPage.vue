@@ -34,8 +34,26 @@ import SideBar from "@/components/SideBar.vue";
         diagnostics: [],
       };
     },
+    //GET request using fetch, will continue to update once changes can be tested
     created(){
       //TODO Send get request on /supported-pids endpoint
+      //GET request using fetch, will continue to update once changes can be tested
+      fetch(/*"Query Page url"*/)
+        .then(async response => {
+          const data = await response.json();
+          //check for error response
+          if (!response.ok){
+            //get error message from body or defaut to response statusText
+            const error = (data && data.message) || response.statusText;
+            return Promise.reject(error);
+          }
+
+          this.totalVuePackages = data.total;
+        })
+        .catch(error => {
+          this.errorMessage = error;
+          console.error("There was an error!", error);
+        });
       //TODO then populate supported_pids list
     },
     methods: {
