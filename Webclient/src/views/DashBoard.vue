@@ -2,20 +2,27 @@
   <div>
     <!-- Static sidebar for desktop -->
     <SideBar active="Dashboard" />
+
     <!-- This is the dashboard -->
     <div class="flex flex-1 flex-col md:pl-64">
       <main>
-        <div class="py-6">
+        <div class="py-6 bg-gray-900" >
           <div class="mx-auto max-w-7xl px-4 sm:px-6 md:px-8">
-            <h1 class="text-2xl font-semibold text-gray-900">Dashboard</h1>
+            <h1 class="text-2xl font-semibold text-neutral-50 ">Dashboard</h1>
           </div>
           <div class="mx-auto max-w-7xl px-4 sm:px-6 md:px-8">
             <!-- This is where we display the diagnostics -->
-              <div v-for="diagnostic in diagnostics" :key="diagnostic[0]" class="diagnostic">
-                <p> {{ diagnostic[0] }} </p>
-                <p> {{ diagnostic[1] }} </p>
+              <div class="grid grid-cols-4 gap-4">
+                <div class="text-center" v-for="diagnostic in diagnostics" :key="diagnostic[0]">
+                  <div class="overflow-hidden rounded-xl ">
+                    <ul role="list" class="divide-y divide-gray-700 break-words">
+                      <li class="bg-gray-500 p-2"> {{ diagnostic.name}} </li>
+                      <li class="bg-gray-400 p-1" > {{ diagnostic.value}} </li>
+                    </ul>
+                  </div>
+                </div>
               </div>
-            <!-- /End replace -->
+            <!-- /End of the diagnostics divs -->
           </div>
         </div>
       </main>
@@ -24,7 +31,7 @@
 </template>
 
 <script setup>
-import SideBar from "@/components/SideBar.vue";
+  import SideBar from "@/components/SideBar.vue";
 </script>
 
 <script>
@@ -36,12 +43,13 @@ import SideBar from "@/components/SideBar.vue";
       };
     },
     created(){
+      //TODO This is working fine, but maybe throw it in to a set interval or something fancy so that the page updates.
+      // You could have a refresh button or refactor it to use a websocket connection
       console.log(`${location.protocol}//${location.host}/api/full-dump`);
       fetch(`${location.protocol}//${location.host}/api/full-dump`)
       .then(response => response.json())
       .then(data => {
-        data.diagnostics.forEach(diagnostic => this.diagnostics.push(diagnostic));
-        console.log("I got some data!". data);
+        this.diagnostics = data.diagnostics;
       });
     }
   };
