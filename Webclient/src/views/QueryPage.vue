@@ -10,6 +10,8 @@
           <div class="mx-auto max-w-7xl px-4 sm:px-6 md:px-8">
             <!-- Search bar goes here -->
             <div class="py-4">
+              <h1 style= "text=align: center; margin:0"> Get Query Input</h1>
+<input type = "text" placeholder=" Enter the search Query"/>
             <!-- Response is parsed and populates this region -->
               <div class="h-96 rounded-lg border-4 border-dashed border-gray-200" />
             </div>
