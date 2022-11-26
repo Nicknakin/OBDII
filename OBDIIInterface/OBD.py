@@ -24,7 +24,6 @@ import json
 import datetime
 import csv
 import can
-import can.interfaces.vector
 from ctypes import *
 
 
@@ -58,6 +57,12 @@ parser.add_argument('-r','--report',help='Read current sensor values',action='st
 parser.add_argument('-d','--debug',help = 'Print debug information to terminal',action='store_true')
 args = parser.parse_args()
 
+if args.report:
+    REPORT = True
+if args.clear:
+    CLEAR = True
+if args.get:
+    GET = True
 if args.debug:
     DEBUG = True
 else:
