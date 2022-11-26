@@ -119,7 +119,7 @@ app.get("/full-dump", (req, res) => {
     };
 
     //Log request and respond
-    logHistory({ endpoint: "/full-dump", time: new Date(), req, response });
+    logHistory({ endpoint: "/full-dump", time: new Date(), response });
     res.end(JSON.stringify(response));
   }).stdout.on('data', (data) => { // On output handler
     str += data.toString();
@@ -135,7 +135,7 @@ app.get("/manual-query", (req, res) => {
   //TODO Define handlers to built out output string and send response
 
   //Log request and respond TODO Put inside of program exit handler
-  logHistory({ endpoint: "/manual-query", time: new Date(), req, response });
+  logHistory({ endpoint: "/manual-query", time: new Date(), response });
   res.end(/*TODO Data goes here*/);
 });
 
@@ -144,10 +144,10 @@ app.get("/manual-query", (req, res) => {
 //TODO Default start from most recent, expect req.body.start to hold the requested start index (skip n many entries)
 app.get("/history", (req, res) => {
   //TODO Get history of all requests
-
+  let response = getHistory();
   // Log request and respond
-  logHistory({ endpoint: "/history", time: new Date(), req, response });
-  res.end(/*TODO Data goes here*/);
+  logHistory({ endpoint: "/history", time: new Date(), });
+  res.end(JSON.stringify(response));
 });
 
 //TODO Endpoint that gets the supported PIDS from the python program
@@ -159,10 +159,14 @@ app.get("/supported-pids", (req, res) => {
   //TODO Define handlers for python program
 
   // Log request and respond TODO Put inside of program exit handler
-  logHistory({ endpoint: "/history", time: new Date(), req, response });
+  logHistory({ endpoint: "/history", time: new Date(), response });
   res.end(/*TODO Data goes here*/);
 });
 
 function logHistory(data) {
   history.push(data);
+};
+
+function getHistory(data) {
+  return history;
 };
