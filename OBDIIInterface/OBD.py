@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 '''
 This program will be hosted on the Raspberry Pi4 and will retrieve the informaiton from the vehicle
 Retrieve 
@@ -46,6 +47,8 @@ log_folder = base_dir + os.sep + "Log"
 global exported_data_file
 exported_data_file = "export_data.json"
 
+global exfiltrate_data_time
+exfiltrate_data_time = 2
 
 
 
@@ -301,7 +304,7 @@ CAN_EFF_FLAG = 0x80000000
 #Create a connection for use of API Queries
 print("Establishing connection...")
 
-bus = can.interface.Bus(channel='can0', bustype='socketcan',bitrate=bitrate)
+bus = can.Bus(channel='can0', bustype='socketcan',bitrate=bitrate)
 
 
 #Test message to determine if the connection was properly made
@@ -436,7 +439,7 @@ with open(csv_file_path, mode='r') as infile:
             end = time.time()
             hours, rem = divmod(end - start, 3600)
             minutes, seconds = divmod(rem, 60)
-            if minutes >= 1:
+            if minutes >= exfiltrate_data_time:
                 timestamp = str(datetime.datetime.now())
                 data = {"timestamp": timestamp, "speed": speed, "rpm": rpm, "temperature": intake_air_temperature}
                 if exfiltrate_data(data):
