@@ -12,12 +12,23 @@
           <div class="mx-auto max-w-7xl px-4 sm:px-6 md:px-8">
             <!-- Replace with your content -->
             <!-- Throw up a little table here -->
+            
             <!-- Maybe include some buttons here too to configure the number of elements in the table, or add a pages functionality -->
+
             <div class="py-4">
-              <!-- Generate elements of the table using the history list -->
-              <div class="h-96 rounded-lg border-4 border-dashed border-gray-200" />
+              <table class = "table-auto" id="History Table">
+                <thead>
+                  <tr>
+                    <th class="text-2xl font-semibold text-neutral-50 " v-for = "header in headers" :key='header'>{{header}}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for = "row in history" :key='row.time'> 
+                    <td class="text-2xl font-semibold text-neutral-50 " v-for="field in headers" :key='field'>{{row[field]}}</td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
-            <!-- /End replace -->
           </div>
         </div>
       </main>
@@ -37,6 +48,7 @@ import SideBar from "@/components/SideBar.vue";
       return {
         //List to generate history elements out of
         history: [],
+        headers: ["endpoint", "response","time"],
         //Object to store search parameters 
         searchSettings: {
           count: 100,
@@ -46,8 +58,11 @@ import SideBar from "@/components/SideBar.vue";
       };
     },
     created(){
-      //TODO Send get request on /history endpoint
-      //TODO then populate history list
+      fetch(`${location.protocol}//${location.host}/api/history`)
+      .then(response => response.json())
+      .then(data => {
+        this.history = data;
+      });
     },
     methods: {
       //Function that is called when query is sent
