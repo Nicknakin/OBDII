@@ -315,8 +315,9 @@ CAN_EFF_FLAG = 0x80000000
 print("Establishing connection...")
 
 #Initilize CAN bus
-modifier = subprocess.run("chmod","u+x","can_startup.sh")
-startup = subprocess.run("./can_startup.sh")
+cmd = "chmod u+x can_startup.sh"
+modifier = os.system(cmd)
+startup = os.system("./can_startup.sh")
 print("Starting CAN bus {}\t{}".format(modifier,startup))
 bus = can.interface.Bus(channel='can0', bustype='socketcan')
 
