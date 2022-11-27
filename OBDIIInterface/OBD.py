@@ -61,12 +61,18 @@ parser.add_argument('-r','--report',help='Read current sensor values',action='st
 parser.add_argument('-d','--debug',help = 'Print debug information to terminal',action='store_true')
 args = parser.parse_args()
 
-if args.report:
+if args.report == True:
     REPORT = True
-if args.clear:
+else:
+    REPORT = False
+if args.clear == True:
     CLEAR = True
-if args.get:
+else: 
+    CLEAR = False
+if args.get == True:
     GET = True
+else:
+    GET = False
 if args.debug:
     DEBUG = True
 else:
