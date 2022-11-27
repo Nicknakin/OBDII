@@ -114,12 +114,12 @@ def _output_message(message):
     print(message)
     try:
         #output_file = os.path.join(log_folder,"log.txt")
-        with open("log.txt", "a+") as f:
-            f.write(message + "\n")
+        f=open("log.txt", "a+")
+        f.write(message + "\n")
+        f.close()
     except Exception as e:
         if(DEBUG):print("Log fail")
         _output_message("[##LOG##] An exception of type {0} occurred. Arguments:\n{1!r}".format(type(e).__name__,e.args))
-        pass
 
 def exfiltrate_data(data):
     """Send the data read from the OBD-II port to a JSON log to be read. This is the main output function
@@ -132,8 +132,9 @@ def exfiltrate_data(data):
     """
     try:
         #output_file = os.path.join(log_folder,exported_data_file)
-        with open('export_data.json', "a+") as f:
-            f.write(json.dumps(data)+"\n\n")
+        f = open('export_data.json', "a+")
+        f.write(json.dumps(data,separators=':')+"\n\n")
+        f.close()
         _output_message("Data sent! {0}".format(data))
     except Exception as e:
         if(DEBUG):print("Export fail")
