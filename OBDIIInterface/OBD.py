@@ -339,7 +339,7 @@ def _output_message(message):
     """
     print(message)
     try:
-        output_file = "/Log/log.txt"
+        output_file = "Log/log.txt"
         with open(output_file, "a") as f:
             f.write(message + "\n")
     except Exception as e:
@@ -360,11 +360,12 @@ def exfiltrate_data(data):
     for i in range(0,len(data)):
         dictionary = {i:data[i]}
     try:
-        with open("/Log/"+ exported_data_file, "a+") as f:
+        with open("Log/"+ exported_data_file, "a+") as f:
             f.write(json.dumps(dictionary)+"\n\n")
         _output_message("Data sent!")
-    except:
-        _output_message("Data not sent!")
+    except Exception as e:
+        if(DEBUG):print("Export fail")
+        _output_message("[##EXPORT##] An exception of type {0} occurred. Arguments:\n{1!r}".format(type(e).__name__,e.args))
         return False
     return True
 
@@ -411,6 +412,7 @@ if(REPORT):
                                         _output_message(message)
                                         break
                                     if response:
+                                        #https://en.wikipedia.org/wiki/OBD-II_PIDs#Standard_PIDs
                                         received_pid = list(response.data)[2]
                                         A = list(response.data)[3]
                                         B = list(response.data)[4]
@@ -489,6 +491,7 @@ if(CLEAR):
                 message = "No response from CAN bus while clearing DTCs"
                 _output_message(message)
             if response:
+                #https://en.wikipedia.org/wiki/OBD-II_PIDs#Standard_PIDs
                 received_pid = list(response.data)[2]
                 A = list(response.data)[3]
                 B = list(response.data)[4]
