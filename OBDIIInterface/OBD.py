@@ -100,9 +100,6 @@ bus = can.interface.Bus(channel='can0', bustype='socketcan')
 
 
 #notifier = can.Notifier(bus, [can.Printer()])
-##########################################################
-############## GET INFORMATION FROM VEHICLE ##############
-##########################################################
 
 ########################################################
 ############## SEND REQUESTED INFORMATION ##############
@@ -117,8 +114,8 @@ def _output_message(message):
     print(message)
     try:
         #output_file = os.path.join(log_folder,"log.txt")
-        f = open("Log/log.txt", "a")
-        f.write(message + "\n")
+        with open("log.txt", "a+") as f:
+            f.write(message + "\n")
     except Exception as e:
         if(DEBUG):print("Log fail")
         _output_message("[##LOG##] An exception of type {0} occurred. Arguments:\n{1!r}".format(type(e).__name__,e.args))
@@ -135,8 +132,8 @@ def exfiltrate_data(data):
     """
     try:
         #output_file = os.path.join(log_folder,exported_data_file)
-        f= open('Log/export_data.json', "a+")
-        f.write(json.dumps(data)+"\n\n")
+        with open('export_data.json', "a+") as f:
+            f.write(json.dumps(data)+"\n\n")
         _output_message("Data sent! {0}".format(data))
     except Exception as e:
         if(DEBUG):print("Export fail")
@@ -148,6 +145,11 @@ def exfiltrate_data(data):
 start = time.time()
 #Setup JSON output file
 csv_file_path = base_dir + os.sep +obd2_csv_file
+
+
+##########################################################
+############## GET INFORMATION FROM VEHICLE ##############
+##########################################################
 
 if(REPORT):
     _output_message("Starting Report:")
@@ -248,7 +250,7 @@ if(GET):
             _output_message("DTC: {} {} {} {} {}".format(DTC_class,A,B,C,D))
             data_log = (DTC_class,A,B,C,D)
             exfiltrate_data(data_log)
-    except:
+    except can.CanError:
         _output_message("CAN Error while getting DTCs")
 
 
@@ -273,5 +275,5 @@ if(CLEAR):
                 C = list(response.data)[5]
                 D = list(response.data)[6]
                 _output_message("Recieved: {} {} {} {} {}\n".format(received_pid,A,B,C,D))
-        except:
+        except can.CanError:
             _output_message("CAN Error while clearing DTCs")
