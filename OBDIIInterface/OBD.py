@@ -74,6 +74,9 @@ else:
 if(DEBUG):
     print("###\tDEBUG/ARGUMENTS PASSED: {0}\t###\n".format(args))
 
+if(REPORT and CLEAR):
+    exit("Do you know what you're doing?")
+
 ########################################################################
 ############## BIND C PROGRAM HEADERS TO PYTHON STRUCTURE ##############
 ########################################################################
@@ -307,10 +310,6 @@ print("Establishing connection...")
 bus = can.interface.Bus(channel='can0', bustype='socketcan')
 
 
-#Test message to determine if the connection was properly made
-msg= can.Message(arbitration_id=0x7de, data=[0, 25, 0, 1, 3, 1, 4, 1])
-bus.send(msg)
-
 #notifier = can.Notifier(bus, [can.Printer()])
 ##########################################################
 ############## GET INFORMATION FROM VEHICLE ##############
@@ -342,6 +341,7 @@ def _output_message(message):
         with open(output_file, "a") as f:
             f.write(message + "\n")
     except:
+        print("Log fail")
         pass
 
 def exfiltrate_data(data):
@@ -399,7 +399,7 @@ if(REPORT):
                                 time.sleep(0.5)
                                 for i in range(0, 2):
                                     time.sleep(0.5)
-                                    response = bus.recv(timeout=2)
+                                    response = bus.recv(timeout=5)
                                     if not response:
                                         message = "No response from CAN bus. Service: {} PID: {} - {}".format(service_id.zfill(2), pid.zfill(2), description)
                                         _output_message(message)
@@ -442,3 +442,46 @@ if(REPORT):
                 end = time.time()
                 hours, rem = divmod(end - start, 3600)
                 minutes, seconds = divmod(rem, 60)
+
+
+if(GET):
+    msg = can.Message(arbitration_id=0x7DF, data=[2, 3, 0, 0, 0, 0, 0, 0], is_extended_id=False)
+    try:
+        bus.send(msg)
+        response = bus.recv(timeout=5)
+        if not response:
+            message = "No response from CAN bus while retrieving DTCs"
+            _output_message(message)
+        if response:
+            received_pid = list(response.data)[2]
+            A = list(response.data)[3]
+            B = list(response.data)[4]
+            C = list(response.data)[5]
+            D = list(response.data)[6]
+            _output_message("DTC: {} {} {} {} {}".format(received_pid,A,B,C,D))
+            data_log = (received_pid,A,B,C,D)
+            exfiltrate_data(data_log)
+    except:
+        _output_message("CAN Error while getting DTCs")
+
+
+if(CLEAR):
+    msg = can.Message(arbitration_id=0x7DF, data=[0, 4, 0, 0, 0, 0, 0, 0], is_extended_id=False)
+    for i in range(0,10):
+        try:
+            _output_message("Attempting to clear DTCs...")
+            bus.send(msg)
+            time.sleep(2)
+            response = bus.recv(timeout=5)
+            if not response:
+                message = "No response from CAN bus while clearing DTCs"
+                _output_message(message)
+            if response:
+                received_pid = list(response.data)[2]
+                A = list(response.data)[3]
+                B = list(response.data)[4]
+                C = list(response.data)[5]
+                D = list(response.data)[6]
+                _output_message("Recieved: {} {} {} {} {}\n".format(received_pid,A,B,C,D))
+        except:
+            _output_message("CAN Error while clearing DTCs")
