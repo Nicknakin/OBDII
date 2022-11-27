@@ -342,8 +342,9 @@ def _output_message(message):
         output_file = "/Log/log.txt"
         with open(output_file, "a") as f:
             f.write(message + "\n")
-    except:
-        print("Log fail")
+    except Exception as e:
+        if(DEBUG):print("Log fail")
+        _output_message("[##LOG##] An exception of type {0} occurred. Arguments:\n{1!r}".format(type(e).__name__,e.args))
         pass
 
 def exfiltrate_data(data):
@@ -398,7 +399,7 @@ if(REPORT):
 
                         if service_int >= 0 and pid_int >= 0:
                             msg = can.Message(arbitration_id=0x7DF, data=[2, service_int, pid_int, 0, 0, 0, 0, 0], is_extended_id=False)
-                            _output_message("Sending: {}".format(msg))
+                            if(DEBUG):_output_message("Sending: {}".format(msg))
                             try:
                                 bus.send(msg)
                                 time.sleep(0.5)
