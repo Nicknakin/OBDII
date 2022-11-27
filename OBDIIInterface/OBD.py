@@ -116,6 +116,7 @@ def _output_message(message):
         #output_file = os.path.join(log_folder,"log.txt")
         f=open("log.txt", "a+")
         f.write(message + "\n")
+        f.flush()
         f.close()
     except Exception as e:
         if(DEBUG):print("Log fail")
@@ -132,8 +133,9 @@ def exfiltrate_data(data):
     """
     try:
         #output_file = os.path.join(log_folder,exported_data_file)
-        f = open('export_data.json', "a+")
-        f.write(json.dumps(data,separators=':')+"\n\n")
+        f = open(exported_data_file, "a+",encoding="utf-8")
+        f.write(json.dumps(data,separators=(':',','))+"\n\n")
+        f.flush()
         f.close()
         _output_message("Data sent! {0}".format(data))
     except Exception as e:
@@ -144,7 +146,7 @@ def exfiltrate_data(data):
 
 #Assign a timestamp
 start = time.time()
-#Setup JSON output file
+#Setup CSV
 csv_file_path = base_dir + os.sep +obd2_csv_file
 
 
