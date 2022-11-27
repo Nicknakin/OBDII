@@ -133,11 +133,11 @@ def exfiltrate_data(data):
     """
     try:
         #output_file = os.path.join(log_folder,exported_data_file)
-        f = open(exported_data_file, "w+",encoding="utf-8")
+        f = open(exported_data_file, "a+",encoding="utf-8")
         f.write(json.dumps(data,separators=(':',','))+"\n\n")
         f.flush()
         f.close()
-        _output_message("Data sent! {0}".format(data))
+        if(DEBUG):_output_message("Data sent! {0}".format(data))
     except Exception as e:
         if(DEBUG):print("Export fail")
         _output_message("[##EXPORT##] An exception of type {0} occurred. Arguments:\n{1!r}".format(type(e).__name__,e.args))
@@ -278,5 +278,6 @@ if(CLEAR):
                 C = list(response.data)[5]
                 D = list(response.data)[6]
                 _output_message("Recieved: {} {} {} {} {}\n".format(received_pid,A,B,C,D))
+                break
         except can.CanError:
             _output_message("CAN Error while clearing DTCs")
