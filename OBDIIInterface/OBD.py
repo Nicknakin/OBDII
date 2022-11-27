@@ -204,7 +204,8 @@ if(REPORT):
                                                     result = eval(formula)
                                                     message = "{description}: {result}".format(description=description, result=result)
                                                     _output_message(message)
-                                                    exfiltrate_data(message)
+                                                    form_msg = "\"name\""+":"+description+"," + "\"value\""+":"+result
+                                                    exfiltrate_data(form_msg)
                                                     if pid_int == int(received_pid):
                                                         if pid_int == int("0C", 16):
                                                             rpm = result
@@ -252,6 +253,7 @@ if(GET):
             D = list(response.data)[6]
             _output_message("DTC: {} {} {} {} {}".format(DTC_class,A,B,C,D))
             data_log = (DTC_class,A,B,C,D)
+            #TODO: Format message for JSON e.g. form_msg = "\"name\""+":"+description+"," + "\"value\""+":"+result
             exfiltrate_data(data_log)
     except can.CanError:
         _output_message("CAN Error while getting DTCs")
