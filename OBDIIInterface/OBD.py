@@ -116,9 +116,9 @@ def _output_message(message):
     """
     print(message)
     try:
-        output_file = os.path.join(log_folder,"log.txt")
-        with open(output_file, "a") as f:
-            f.write(message + "\n")
+        #output_file = os.path.join(log_folder,"log.txt")
+        f = open("Log/log.txt", "a")
+        f.write(message + "\n")
     except Exception as e:
         if(DEBUG):print("Log fail")
         _output_message("[##LOG##] An exception of type {0} occurred. Arguments:\n{1!r}".format(type(e).__name__,e.args))
@@ -134,9 +134,9 @@ def exfiltrate_data(data):
         bool: True if the data was logged successfully, False if error occurred
     """
     try:
-        output_file = os.path.join(log_folder,exported_data_file)
-        with open(output_file, "a+") as f:
-            f.write(json.dumps(data)+"\n\n")
+        #output_file = os.path.join(log_folder,exported_data_file)
+        f= open('Log/export_data.json', "a+")
+        f.write(json.dumps(data)+"\n\n")
         _output_message("Data sent! {0}".format(data))
     except Exception as e:
         if(DEBUG):print("Export fail")
