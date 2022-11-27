@@ -310,6 +310,7 @@ print("Establishing connection...")
 
 #Initilize CAN bus
 startup = subprocess.run("sudo","/sbin/ip", "link","set", "can0", "up", "type","can","bitrate","500000")
+print("Starting CAN bus {}".format(startup))
 bus = can.interface.Bus(channel='can0', bustype='socketcan')
 
 
