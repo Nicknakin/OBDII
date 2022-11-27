@@ -5,7 +5,7 @@
       <main>
         <div class="py-6 h-screen bg-gray-900">
           <div class="mx-auto max-w-7xl px-4 sm:px-6 md:px-8">
-            <h1 class="text-2xl font-semibold text-gray-50">Send a Query</h1>
+            <h1 class="text-2xl font-semibold text-gray-50">Send a Query test change</h1>
           </div>
           <div class="mx-auto max-w-7xl px-4 sm:px-6 md:px-8">
             <!-- Search bar goes here -->
@@ -34,8 +34,26 @@ import SideBar from "@/components/SideBar.vue";
         diagnostics: [],
       };
     },
+    //GET request using fetch, will continue to update once changes can be tested
     created(){
       //TODO Send get request on /supported-pids endpoint
+      //GET request using fetch, will continue to update once changes can be tested
+      fetch(/*"Manual Query endpoint and RESTInterface "*/)
+        .then(async response => {
+          const data = await response.json();
+          //check for error response
+          if (!response.ok){
+            //get error message from body or defaut to response statusText
+            const error = (data && data.message) || response.statusText;
+            return Promise.reject(error);
+          }
+          //replace the line below 
+          this.totalVuePackages = data.total;
+        })
+        .catch(error => {
+          this.errorMessage = error;
+          console.error("There was an error!", error);
+        });
       //TODO then populate supported_pids list
     },
     methods: {

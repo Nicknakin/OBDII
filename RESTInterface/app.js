@@ -3,8 +3,9 @@ import express from 'express'
 const app = express();
 
 //Get the runner and program from command line arguments or use defaults
+//TODO Test to see if host system is Windows, if not use the alternate file path 
 const runner = process.argv.length > 4 ? process.argv[process.argv.length - 2] : "python";
-const program = process.argv.length > 4 ? process.argv[process.argv.length - 1] : "../OBDIIInterface/OBD.py";
+const program = process.argv.length > 4 ? process.argv[process.argv.length - 1] : "..\\OBDIIInterface\\OBD.py";
 
 //Prepare an express server on port 8081
 const server = app.listen(8081, function() {
