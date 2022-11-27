@@ -25,6 +25,7 @@ import json
 import datetime
 import csv
 import can
+import subprocess
 from ctypes import *
 
 
@@ -308,7 +309,7 @@ CAN_EFF_FLAG = 0x80000000
 print("Establishing connection...")
 
 #Initilize CAN bus
-os.system("sudo /sbin/ip link set can0 up type can bitrate 500000")
+startup = subprocess.run("sudo","/sbin/ip", "link","set", "can0", "up", "type","can","bitrate","500000")
 bus = can.interface.Bus(channel='can0', bustype='socketcan')
 
 
