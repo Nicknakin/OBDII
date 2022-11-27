@@ -374,6 +374,7 @@ start = time.time()
 csv_file_path = base_dir + os.sep +obd2_csv_file
 
 if(REPORT):
+    _output_message("Starting Report:")
     with open(csv_file_path, mode='r') as infile:
                 reader = csv.DictReader(infile)
                 for row in reader:
@@ -450,6 +451,7 @@ if(REPORT):
 
 
 if(GET):
+    _output_message("Starting GET")
     msg = can.Message(arbitration_id=0x7DF, data=[2, 3, 0, 0, 0, 0, 0, 0], is_extended_id=False)
     try:
         bus.send(msg)
@@ -471,6 +473,7 @@ if(GET):
 
 
 if(CLEAR):
+    _output_message("Starting CLEAR")
     msg = can.Message(arbitration_id=0x7DF, data=[0, 4, 0, 0, 0, 0, 0, 0], is_extended_id=False)
     for i in range(0,10):
         try:
