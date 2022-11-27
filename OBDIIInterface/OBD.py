@@ -209,7 +209,7 @@ if(REPORT):
                                                     result = eval(formula)
                                                     message = "{description}: {result}".format(description=description, result=result)
                                                     _output_message(message)
-                                                    form_msg = "\"name\""+":"+description+"," + "\"value\""+":"+result
+                                                    form_msg = "\"name\""+":"+str(description)+"," + "\"value\""+":"+str(result)
                                                     exfiltrate_data(form_msg)
                                                     if pid_int == int(received_pid):
                                                         if pid_int == int("0C", 16):
