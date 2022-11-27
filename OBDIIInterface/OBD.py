@@ -406,7 +406,7 @@ if(REPORT):
 
                         if service_int >= 0 and pid_int >= 0:
                             msg = can.Message(arbitration_id=0x7DF, data=[2, service_int, pid_int, 0, 0, 0, 0, 0], is_extended_id=False)
-
+                            _output_message("Sending: {}".format(msg))
                             try:
                                 bus.send(msg)
                                 time.sleep(0.5)
@@ -459,20 +459,25 @@ if(REPORT):
 
 if(GET):
     _output_message("Starting GET")
-    msg = can.Message(arbitration_id=0x7DF, data=[2, 3, 0, 0, 0, 0, 0, 0], is_extended_id=False)
+    msg = can.Message(arbitration_id=0x7DF, data=[2, 3, 0, 0, 0, 0, 0, 0, 0], is_extended_id=False)
     try:
+        _output_message("Sending: {}".format(msg))
         bus.send(msg)
         response = bus.recv(timeout=5)
+        time.sleep(0.5)
         if not response:
             message = "No response from CAN bus while retrieving DTCs"
             _output_message(message)
         if response:
+            _output_message("Response: {}".format(response))
+            classify = list(response.data)[0]
             received_pid = list(response.data)[2]
             A = list(response.data)[3]
             B = list(response.data)[4]
             C = list(response.data)[5]
             D = list(response.data)[6]
-            _output_message("DTC: {} {} {} {} {}".format(received_pid,A,B,C,D))
+            E = list(response.data)[7]
+            _output_message("DTC: {} {} {} {} {} {}".format(received_pid,A,B,C,D,E))
             data_log = (received_pid,A,B,C,D)
             exfiltrate_data(data_log)
     except:
@@ -481,10 +486,11 @@ if(GET):
 
 if(CLEAR):
     _output_message("Starting CLEAR")
-    msg = can.Message(arbitration_id=0x7DF, data=[0, 4, 0, 0, 0, 0, 0, 0], is_extended_id=False)
+    msg = can.Message(arbitration_id=0x7DE, data=[0, 4, 0, 0, 0, 0, 0, 0], is_extended_id=False)
     for i in range(0,10):
         try:
             _output_message("Attempting to clear DTCs...")
+            _output_message("Sending: {}".format(msg))
             bus.send(msg)
             time.sleep(2)
             response = bus.recv(timeout=5)
