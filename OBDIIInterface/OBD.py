@@ -331,7 +331,7 @@ bus = can.interface.Bus(channel='can0', bustype='socketcan')
 ############## SEND REQUESTED INFORMATION ##############
 ########################################################
 def _output_message(message):
-    """Output the message to the log file, if the log file is larger than 1Mb create a new file.\n
+    """Output the message to the log file\n
     Intended purely as a DEBUG error log for the socket, not OBD/CAN output
 
     Args:
@@ -339,17 +339,7 @@ def _output_message(message):
     """
     print(message)
     try:
-        output_file = log_folder + os.sep + "log.txt"
-        statvfs = os.statvfs(log_folder)
-        free_bytes = statvfs.f_frsize * statvfs.f_bfree
-
-        if os.path.isfile(output_file):
-            file_size = os.path.getsize(output_file)
-            if free_bytes < 1000000 or file_size > 1000000:
-                output_file_backup = output_file + ".OLD"
-                cmd = "mv {} {}".format(output_file, output_file_backup)
-                os.system(cmd)
-
+        output_file = "/Log/log.txt"
         with open(output_file, "a") as f:
             f.write(message + "\n")
     except:
@@ -366,9 +356,11 @@ def exfiltrate_data(data):
         bool: True if the data was logged successfully, False if error occurred
     """
     _output_message("Sending Data...")
+    for i in range(0,len(data)):
+        dictionary = {i:data[i]}
     try:
-        with open(log_folder + os.sep + exported_data_file, "a+") as f:
-            f.write(json.dumps(data)+"\n\n")
+        with open("/Log/"+ exported_data_file, "a+") as f:
+            f.write(json.dumps(dictionary)+"\n\n")
         _output_message("Data sent!")
     except:
         _output_message("Data not sent!")
