@@ -191,7 +191,7 @@ if(REPORT):
                                 time.sleep(0.5)
                                 for i in range(0, 2):
                                     time.sleep(0.5)
-                                    response = bus.recv(timeout=5)
+                                    response = bus.recv(timeout=2)
                                     if not response:
                                         message = "No response from CAN bus. Service: {} PID: {} - {}".format(service_id.zfill(2), pid.zfill(2), description)
                                         _output_message(message)
@@ -209,7 +209,7 @@ if(REPORT):
                                                     result = eval(formula)
                                                     message = "{description}: {result}".format(description=description, result=result)
                                                     _output_message(message)
-                                                    form_msg = "\"name\""+":"+str(description)+"," + "\"value\""+":"+str(result)
+                                                    form_msg = "{\"name\":"+str(description)+";" + "\"value\":"+str(result)+"}"
                                                     exfiltrate_data(form_msg)
                                                     if pid_int == int(received_pid):
                                                         if pid_int == int("0C", 16):
