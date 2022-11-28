@@ -135,7 +135,7 @@ def exfiltrate_data(data):
     try:
         #output_file = os.path.join(log_folder,exported_data_file)
         f = open(exported_data_file, "a+",encoding="utf-8")
-        f.write(json.dumps(data)+",\n")
+        f.write(json.dump(data)+",\n")
         f.flush()
         f.close()
         if(DEBUG):_output_message("Data sent! {0}".format(data))
@@ -159,7 +159,7 @@ if(REPORT):
     #Clear the current value of export_data.json
     with open(exported_data_file,'w') as f:
         pass
-    exfiltrate_data("[")
+    output_list = list()
     _output_message("Starting Report:")
     with open(csv_file_path, mode='r') as infile:
                 reader = csv.DictReader(infile)
@@ -213,7 +213,8 @@ if(REPORT):
                                                     message = "{description}: {result}".format(description=description, result=result)
                                                     _output_message(message)
                                                     form_msg = {"name":str(description),"value":result}
-                                                    exfiltrate_data(form_msg)
+                                                    output_list.append(form_msg)
+                                                    #exfiltrate_data(form_msg)
                                                     if pid_int == int(received_pid):
                                                         if pid_int == int("0C", 16):
                                                             rpm = result
@@ -230,9 +231,9 @@ if(REPORT):
                                                     result += chr(c)
                                                 message = "{description}: {result}".format(description=description, result=result)
                                                 form_msg = {"name":str(description),"value":result}
-
+                                                output_list.append(form_msg)
                                                 _output_message(message)
-                                                exfiltrate_data(form_msg)
+                                                #exfiltrate_data(form_msg)
                                             except:
                                                 _output_message("Unable to parse response: {}.".format(response.data))
                             except can.CanError:
@@ -241,7 +242,8 @@ if(REPORT):
                 end = time.time()
                 hours, rem = divmod(end - start, 3600)
                 minutes, seconds = divmod(rem, 60)
-    exfiltrate_data("]")
+    exfiltrate_data(output_list)
+
 
 
 if(GET):
