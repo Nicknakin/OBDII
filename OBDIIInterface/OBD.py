@@ -209,7 +209,7 @@ if(REPORT):
                                                     result = eval(formula)
                                                     message = "{description}: {result}".format(description=description, result=result)
                                                     _output_message(message)
-                                                    form_msg = "{\"name\":"+str(description)+";" + "\"value\":"+str(result)+"}"
+                                                    form_msg = "{\"name\":"+str(description)+"," + "\"value\":"+str(result)+"}"
                                                     exfiltrate_data(form_msg)
                                                     if pid_int == int(received_pid):
                                                         if pid_int == int("0C", 16):
@@ -226,8 +226,9 @@ if(REPORT):
                                                 for c in list(response.data)[-3:]:
                                                     result += chr(c)
                                                 message = "{description}: {result}".format(description=description, result=result)
+                                                form_msg = "{\"name\":"+str(description)+"," + "\"value\":"+str(result)+"}"
                                                 _output_message(message)
-                                                exfiltrate_data(message)
+                                                exfiltrate_data(form_msg)
                                             except:
                                                 _output_message("Unable to parse response: {}.".format(response.data))
                             except can.CanError:
