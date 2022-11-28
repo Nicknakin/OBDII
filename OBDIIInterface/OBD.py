@@ -135,7 +135,7 @@ def exfiltrate_data(data):
     try:
         #output_file = os.path.join(log_folder,exported_data_file)
         f = open(exported_data_file, "a+",encoding="utf-8")
-        f.write(json.dumps(data,separators=(':',','))+"\n")
+        f.write(json.dumps(data)+"\n")
         f.flush()
         f.close()
         if(DEBUG):_output_message("Data sent! {0}".format(data))
@@ -209,7 +209,7 @@ if(REPORT):
                                                     result = eval(formula)
                                                     message = "{description}: {result}".format(description=description, result=result)
                                                     _output_message(message)
-                                                    form_msg = {"name": str(description),"value":result}
+                                                    form_msg = {"name":str(description),"value":result}
                                                     exfiltrate_data(form_msg)
                                                     if pid_int == int(received_pid):
                                                         if pid_int == int("0C", 16):
