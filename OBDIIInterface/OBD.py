@@ -135,7 +135,7 @@ def exfiltrate_data(data):
     try:
         #output_file = os.path.join(log_folder,exported_data_file)
         f = open(exported_data_file, "a+",encoding="utf-8")
-        f.write(json.dump(data)+",\n")
+        f.write(json.dumps(data)+",\n")
         f.flush()
         f.close()
         if(DEBUG):_output_message("Data sent! {0}".format(data))
