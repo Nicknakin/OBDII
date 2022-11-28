@@ -198,11 +198,14 @@ if(REPORT):
                                         break
                                     if response:
                                         #https://en.wikipedia.org/wiki/OBD-II_PIDs#Standard_PIDs
+                                        responseList = list(response.data)
                                         received_pid = list(response.data)[2]
                                         A = list(response.data)[3]
                                         B = list(response.data)[4]
-                                        C = list(response.data)[5]
-                                        D = list(response.data)[6]
+                                        if len(responseList) >= 6:
+                                            C = list(response.data)[5]
+                                        if len(responseList) >= 7:
+                                            D = list(response.data)[6]
                                         if service_id == "1":
                                             if len(formula) > 0:
                                                 try:
@@ -226,7 +229,8 @@ if(REPORT):
                                                 for c in list(response.data)[-3:]:
                                                     result += chr(c)
                                                 message = "{description}: {result}".format(description=description, result=result)
-                                                form_msg = "{\"name\":"+str(description)+"," + "\"value\":"+str(result)+"}"
+                                                form_msg = {"name":str(description),"value":result}
+
                                                 _output_message(message)
                                                 exfiltrate_data(form_msg)
                                             except:

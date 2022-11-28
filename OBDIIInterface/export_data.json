@@ -1,10 +1,28 @@
-[
-  {
-    "name": "Test1",
-    "value": "test value"
-  },
-  {
-    "name": "Test2",
-    "value": 1
-  }
-]
+"[",
+{"name": "Calculated engine load value", "value": 0.0},
+{"name": "Calculated engine load value", "value": 0.0},
+{"name": "Engine coolant temperature", "value": 67},
+{"name": "Engine coolant temperature", "value": 67},
+{"name": "Short term fuel trim, Bank 1", "value": 0.0},
+{"name": "Long term fuel trim, Bank 1", "value": 1.5625},
+{"name": "Intake manifold absolute pressure", "value": 97},
+{"name": "Engine RPM", "value": 0.0},
+{"name": "Engine RPM", "value": 0.0},
+{"name": "Vehicle speed", "value": 0},
+{"name": "Vehicle speed", "value": 0},
+{"name": "Intake air temperature", "value": 36},
+{"name": "Throttle position", "value": 16.07843137254902},
+{"name": "Throttle position", "value": 16.07843137254902},
+{"name": "Run time since engine start", "value": 0},
+{"name": "Barometric pressure", "value": 98},
+{"name": "mode 9 supported PIDs 01 to 20", "value": "\u0000\u0000\u00aa"},
+{"name": "mode 9 supported PIDs 01 to 20", "value": "\u0000\u0000\u0000"},
+{"name": "Vehicle identification number (VIN)", "value": "3VW"},
+{"name": "Calibration ID", "value": "09G"},
+{"name": "Calibration ID", "value": "07K"},
+{"name": "CVN (Calibration Verification Number)", "value": "\u0015\u00ee\u00f6"},
+{"name": "CVN (Calibration Verification Number)", "value": "\u00b6\u00a0\b"},
+{"name": "IPT spark ignition (In-use Performance Tracking)", "value": "\u0014\u00bd("},
+{"name": "ECU Name", "value": "TCM"},
+{"name": "ECU Name", "value": "ECM"},
+"]",

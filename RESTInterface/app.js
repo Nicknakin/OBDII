@@ -15,7 +15,7 @@ const pool = mariadb.createPool({
 });
 
 //Get the runner and program from command line arguments or use defaults
-const runner = process.argv.length > 4 ? process.argv[process.argv.length - 2] : "python";
+const runner = process.argv.length > 4 ? process.argv[process.argv.length - 2] : "python3";
 const program = process.argv.length > 4 ? process.argv[process.argv.length - 1] : "../OBDIIInterface/OBD.py";
 
 //Prepare an express server on port 8081
@@ -29,7 +29,7 @@ const server = app.listen(8081, function() {
 app.get("/full-dump", (req, res) => {
   const requestTime = Date.now()
   //Spawn program
-  const pyProgram = spawn(runner, [program]);
+  const pyProgram = spawn(runner, [program, " -r"]);
   //Prepare output string
   let str = "";
 
@@ -53,6 +53,7 @@ app.get("/full-dump", (req, res) => {
     res.end(JSON.stringify(response));
   }).stdout.on('data', (data) => { // On output handler
     str += data.toString();
+    consol.log(data.toString());
   })
 });
 
