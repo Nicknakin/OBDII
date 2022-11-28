@@ -135,7 +135,7 @@ def exfiltrate_data(data):
     try:
         #output_file = os.path.join(log_folder,exported_data_file)
         f = open(exported_data_file, "a+",encoding="utf-8")
-        f.write(json.dump(data)+",\n")
+        f.write(json.dumps(data)+"\n")
         f.flush()
         f.close()
         if(DEBUG):_output_message("Data sent! {0}".format(data))
@@ -188,10 +188,10 @@ if(REPORT):
                             if(DEBUG):_output_message("Sending: {}".format(msg))
                             try:
                                 bus.send(msg)
-                                time.sleep(0.5)
+                                time.sleep(0.05)
                                 for i in range(0, 2):
-                                    time.sleep(0.5)
-                                    response = bus.recv(timeout=2)
+                                    time.sleep(0.05)
+                                    response = bus.recv(timeout=0.5)
                                     if not response:
                                         message = "No response from CAN bus. Service: {} PID: {} - {}".format(service_id.zfill(2), pid.zfill(2), description)
                                         _output_message(message)
