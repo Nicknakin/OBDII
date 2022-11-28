@@ -29,9 +29,6 @@ app.get("/full-dump", (req, res) => {
   const requestTime = Date.now()
   //Spawn program
   const pyProgram = spawn(runner, ["-r"], { shell: true });
-  //Prepare output string
-  let str = "";
-
   //On program exit handler
   pyProgram.on('exit', async (code, signal) => {
     let data = JSON.parse(
@@ -51,8 +48,7 @@ app.get("/full-dump", (req, res) => {
     logHistory({ endpoint: "/full-dump", requestTime, responseTime: new Date(), response });
     res.end(JSON.stringify(response));
   }).stdout.on('data', (data) => { // On output handler
-    str += data.toString();
-    consol.log(data.toString());
+    console.log(data.toString());
   })
 });
 
