@@ -159,7 +159,7 @@ if(REPORT):
     #Clear the current value of export_data.json
     with open(exported_data_file,'w') as f:
         pass
-
+    exfiltrate_data("[")
     _output_message("Starting Report:")
     with open(csv_file_path, mode='r') as infile:
                 reader = csv.DictReader(infile)
@@ -237,6 +237,7 @@ if(REPORT):
                 end = time.time()
                 hours, rem = divmod(end - start, 3600)
                 minutes, seconds = divmod(rem, 60)
+    exfiltrate_data("]")
 
 
 if(GET):
