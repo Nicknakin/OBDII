@@ -9,11 +9,19 @@
           </div>
           <div class="mx-auto max-w-7xl px-4 sm:px-6 md:px-8">
             <!-- Search bar goes here -->
-            <div class="py-4">
-              <h1 style= "text=align: center; margin:0"> Get Query Input</h1>
-<input type = "text" placeholder=" Enter the search Query"/>
+              <div class="py-4">
+                <div class="textInput">
+                  <label for="inputQuery" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Enter a Query</label>
+                  
+                  <input type="text" id="inputQuery" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg 
+                  
+                  focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 
+                  
+                  dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Query" required>
+        
+                </div>  
             <!-- Response is parsed and populates this region -->
-              <div class="h-96 rounded-lg border-4 border-dashed border-gray-200" />
+              <div class="h-96 rounded-lg border-4 border-dashed border-green-500" />
             </div>
           </div>
         </div>
@@ -69,5 +77,8 @@ import SideBar from "@/components/SideBar.vue";
 
       },
     },
+    
   };
+  
+
 </script>
