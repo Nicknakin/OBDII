@@ -1,3 +1,5 @@
 node_modules/
 liquibase.properties
 config.json
+export_data.json
+log.txt
