@@ -37,7 +37,7 @@ app.get("/full-dump", (req, res) => {
   pyProgram.on('exit', async (code, signal) => {
     let data = JSON.parse(
       await readFile(
-        new URL('../OBDIIInterface/export_data.json', import.meta.url)
+        new URL('./export_data.json', import.meta.url)
       )
     );;
     //Construct response object
