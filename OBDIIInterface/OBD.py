@@ -104,6 +104,7 @@ bus = can.interface.Bus(channel='can0', bustype='socketcan')
 ########################################################
 ############## SEND REQUESTED INFORMATION ##############
 ########################################################
+
 def _output_message(message):
     """Output the message to the log file\n
     Intended purely as a DEBUG error log for the socket, not OBD/CAN output
@@ -155,6 +156,10 @@ csv_file_path = base_dir + os.sep +obd2_csv_file
 ##########################################################
 
 if(REPORT):
+    #Clear the current value of export_data.json
+    with open(exported_data_file,'w') as f:
+        pass
+
     _output_message("Starting Report:")
     with open(csv_file_path, mode='r') as infile:
                 reader = csv.DictReader(infile)
@@ -186,7 +191,7 @@ if(REPORT):
                                 time.sleep(0.5)
                                 for i in range(0, 2):
                                     time.sleep(0.5)
-                                    response = bus.recv(timeout=5)
+                                    response = bus.recv(timeout=2)
                                     if not response:
                                         message = "No response from CAN bus. Service: {} PID: {} - {}".format(service_id.zfill(2), pid.zfill(2), description)
                                         _output_message(message)
@@ -204,7 +209,8 @@ if(REPORT):
                                                     result = eval(formula)
                                                     message = "{description}: {result}".format(description=description, result=result)
                                                     _output_message(message)
-                                                    exfiltrate_data(message)
+                                                    form_msg = "{\"name\":"+str(description)+"," + "\"value\":"+str(result)+"}"
+                                                    exfiltrate_data(form_msg)
                                                     if pid_int == int(received_pid):
                                                         if pid_int == int("0C", 16):
                                                             rpm = result
@@ -220,8 +226,9 @@ if(REPORT):
                                                 for c in list(response.data)[-3:]:
                                                     result += chr(c)
                                                 message = "{description}: {result}".format(description=description, result=result)
+                                                form_msg = "{\"name\":"+str(description)+"," + "\"value\":"+str(result)+"}"
                                                 _output_message(message)
-                                                exfiltrate_data(message)
+                                                exfiltrate_data(form_msg)
                                             except:
                                                 _output_message("Unable to parse response: {}.".format(response.data))
                             except can.CanError:
@@ -233,6 +240,10 @@ if(REPORT):
 
 
 if(GET):
+    #Clear the current value of export_data.json
+    with open(exported_data_file,'w') as f:
+        pass
+
     _output_message("Starting GET")
     msg = can.Message(arbitration_id=0x7DF, data=[2, 3, 0, 0, 0, 0, 0, 0, 0], is_extended_id=False, is_rx=False)
     try:
@@ -252,6 +263,7 @@ if(GET):
             D = list(response.data)[6]
             _output_message("DTC: {} {} {} {} {}".format(DTC_class,A,B,C,D))
             data_log = (DTC_class,A,B,C,D)
+            #TODO: Format message for JSON e.g. form_msg = "\"name\""+":"+description+"," + "\"value\""+":"+result
             exfiltrate_data(data_log)
     except can.CanError:
         _output_message("CAN Error while getting DTCs")
