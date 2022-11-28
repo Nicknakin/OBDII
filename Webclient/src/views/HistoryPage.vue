@@ -16,26 +16,28 @@
             <!-- Maybe include some buttons here too to configure the number of elements in the table, or add a pages functionality -->
 
             <div class="py-4">
-              <table class="table-auto border border-white border-collapse" id="History Table">
+              <table class="mx-auto h-full bg-gray-700 table-auto rounded-xl" id="History Table">
                 <thead>
                   <tr >
-                    <th class="border text-neutral-50 " v-for = "header in headers" :key='header'>{{header}}</th>
+                    <th class="text-neutral-50 font-semibold text-1xl" v-for = "header in fields" :key='header'>{{headers[header]}}</th>
                   </tr>
                 </thead>
-                <tbody>
-                  <tr v-for = "row in history" :key='row.time'> 
-                    <td class="border px-1 text-neutral-50 " v-for="field in headers" :key='field'>
+                <tbody class="bg-gray-300">
+                  <tr v-for = "(row, index) in history" :key='row.time'> 
+                    <td :class="index%2==1? 'bg-gray-200':'bg-gray-300' + ' px-1'" v-for="field in fields" :key='field'>
                     <div v-if="typeof(row[field]) != 'object' || row[field] == null">{{row[field]}}</div>
                     <div class="text-xs" v-if="typeof(row[field]) == 'object' && row[field]">
                       <table class="table-auto">
                         <thead>
                           <tr>
-                            <th class="border text-neutral-50" v-for="entry in Object.entries(row[field])" :key="entry">{{ entry[0] }}</th>
+                            <th class="" v-for="entry in Object.entries(row[field])" :key="entry">
+                            <div v-if="entry[1]">{{ entry[0] }}</div>
+                          </th>
                           </tr>
                         </thead>
                         <tbody>
                           <tr>
-                            <td class="border" v-for="entry in Object.entries(row[field])" :key="entry">{{ entry[1] }}</td>
+                            <td v-for="entry in Object.entries(row[field])" :key="entry">{{ entry[1] }}</td>
                           </tr>
                         </tbody>
                       </table>
@@ -64,7 +66,8 @@ import SideBar from "@/components/SideBar.vue";
       return {
         //List to generate history elements out of
         history: [],
-        headers: ["endpoint", "response", "requestTime", "responseTime"],
+        headers: {"endpoint":"Endpoint", "response":"Response", "requestTime":"Request Time", "responseTime":"Response Time"},
+        fields: ["endpoint", "response", "requestTime", "responseTime"],
         //Object to store search parameters 
         searchSettings: {
           count: 100,
