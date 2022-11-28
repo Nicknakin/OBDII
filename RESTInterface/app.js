@@ -1,3 +1,4 @@
+import { readFile } from 'fs/promises';
 import { spawn } from 'child_process'
 import express from 'express'
 const app = express();
@@ -33,12 +34,17 @@ app.get("/full-dump", (req, res) => {
   let str = "";
 
   //On program exit handler
-  pyProgram.on('exit', (code, signal) => {
+  pyProgram.on('exit', async (code, signal) => {
+    let data = JSON.parse(
+      await readFile(
+        new URL('../OBDIIInterface/export_data.json', import.meta.url)
+      )
+    );;
     //Construct response object
     const response = {
       code,
       signal,
-      diagnostics: [{ name: "Test", value: 1 }],
+      diagnostics: data,
       //diagnostics: JSON.parse(str),
     };
 
