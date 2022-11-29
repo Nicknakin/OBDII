@@ -31,17 +31,19 @@ app.get("/full-dump", (req, res) => {
   const pyProgram = spawn(runner, ["-r"], { shell: true });
   //On program exit handler
   pyProgram.on('exit', async (code, signal) => {
-    let data = JSON.parse(
-      await readFile(
-        new URL('./export_data.json', import.meta.url)
-      )
-    );;
+    let data;
+    if (code == 0)
+      data = JSON.parse(
+        await readFile(
+          new URL('./export_data.json', import.meta.url)
+        )
+      );
+
     //Construct response object
     const response = {
       code,
       signal,
       diagnostics: data,
-      //diagnostics: JSON.parse(str),
     };
 
     //Log request and respond

@@ -25,22 +25,10 @@
                 <tbody class="bg-gray-300">
                   <tr v-for = "(row, index) in history" :key='row.time'> 
                     <td :class="index%2==1? 'bg-gray-200':'bg-gray-300' + ' px-1'" v-for="field in fields" :key='field'>
-                    <div v-if="typeof(row[field]) != 'object' || row[field] == null">{{row[field]}}</div>
+                    <div v-if="typeof(row[field]) != 'object' || row[field] == null" :ref="setRef">{{row[field]}}</div>
                     <div class="text-xs" v-if="typeof(row[field]) == 'object' && row[field]">
-                      <table class="table-auto">
-                        <thead>
-                          <tr>
-                            <th class="" v-for="entry in Object.entries(row[field])" :key="entry">
-                            <div v-if="entry[1]">{{ entry[0] }}</div>
-                          </th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <tr>
-                            <td v-for="entry in Object.entries(row[field])" :key="entry">{{ entry[1] }}</td>
-                          </tr>
-                        </tbody>
-                      </table>
+                      <JsonModal :data="row[field]" :ref="setRef"/>
+                      <div @click="this.modals[index].toggleModal">View More</div>
                     </div>
                     </td>
                   </tr>
@@ -56,18 +44,20 @@
 
 <script setup>
 import SideBar from "@/components/SideBar.vue";
+import JsonModal from "@/components/JsonModal.vue";
 
 </script>
 
 <script>
   export default {
-    name: "QueryPage",
+    name: "HistoryPage",
     data() {
       return {
         //List to generate history elements out of
         history: [],
         headers: {"endpoint":"Endpoint", "response":"Response", "requestTime":"Request Time", "responseTime":"Response Time"},
         fields: ["endpoint", "response", "requestTime", "responseTime"],
+        modals: [],
         //Object to store search parameters 
         searchSettings: {
           count: 100,
@@ -93,6 +83,9 @@ import SideBar from "@/components/SideBar.vue";
         //TODO Handle response and populate history list
 
       },
+      setRef(el) {
+        this.modals.push(el);
+      }
     },
   };
 </script>
