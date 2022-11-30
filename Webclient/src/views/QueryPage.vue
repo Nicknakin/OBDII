@@ -3,7 +3,7 @@
     <SideBar active='Send A Custom Query' />
     <div class="flex flex-1 flex-col md:pl-64">
       <main>
-        <div class="py-6 h-screen bg-gray-900">
+        <div class="min-h-screen py-6 h-screen bg-gray-900">
           <div class="mx-auto max-w-7xl px-4 sm:px-6 md:px-8">
             <h1 class="text-2xl font-semibold text-gray-50">Send a Query test change</h1>
           </div>

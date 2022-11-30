@@ -6,7 +6,7 @@
     <!-- This is the dashboard -->
     <div class="flex flex-1 flex-col md:pl-64">
       <main>
-        <div class="py-6 bg-gray-900" >
+        <div class="min-h-screen py-6 bg-gray-900" >
           <div class="mx-auto max-w-7xl px-4 sm:px-6 md:px-8">
             <h1 class="text-2xl font-semibold text-neutral-50 ">Dashboard</h1>
           </div>

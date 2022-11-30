@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+  <changeSet id="main-1" author="Nicholas Kinney">
+    <createTable tableName="History">
+      <column name="id" type="int(16)" autoIncrement="true">
+        <constraints primaryKey="true"/>
+      </column>
+      <column name="endpoint" type="varchar(255)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="response" type="json"/>
+      <column name="requestTime" type="timestamp">
+        <constraints nullable="false"/>
+      </column>
+      <column name="responseTime" type="timestamp">
+        <constraints nullable="false"/>
+      </column>
+      <column name="created" type="timestamp" defaultValueComputed="CURRENT_TIMESTAMP">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+  </changeSet>
+</databaseChangeLog>
+
