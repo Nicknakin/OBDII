@@ -135,7 +135,7 @@ def exfiltrate_data(data):
     try:
         #output_file = os.path.join(log_folder,exported_data_file)
         f = open(exported_data_file, "a+",encoding="utf-8")
-        f.write(json.dumps(data,separators=(':',','))+"\n")
+        f.write(json.dumps(data)+",\n")
         f.flush()
         f.close()
         if(DEBUG):_output_message("Data sent! {0}".format(data))
@@ -159,7 +159,7 @@ if(REPORT):
     #Clear the current value of export_data.json
     with open(exported_data_file,'w') as f:
         pass
-
+    output_list = list()
     _output_message("Starting Report:")
     with open(csv_file_path, mode='r') as infile:
                 reader = csv.DictReader(infile)
@@ -198,19 +198,23 @@ if(REPORT):
                                         break
                                     if response:
                                         #https://en.wikipedia.org/wiki/OBD-II_PIDs#Standard_PIDs
+                                        responseList = list(response.data)
                                         received_pid = list(response.data)[2]
                                         A = list(response.data)[3]
                                         B = list(response.data)[4]
-                                        C = list(response.data)[5]
-                                        D = list(response.data)[6]
+                                        if len(responseList) >= 6:
+                                            C = list(response.data)[5]
+                                        if len(responseList) >= 7:
+                                            D = list(response.data)[6]
                                         if service_id == "1":
                                             if len(formula) > 0:
                                                 try:
                                                     result = eval(formula)
                                                     message = "{description}: {result}".format(description=description, result=result)
                                                     _output_message(message)
-                                                    form_msg = "{\"name\":"+str(description)+"," + "\"value\":"+str(result)+"}"
-                                                    exfiltrate_data(form_msg)
+                                                    form_msg = {"name":str(description),"value":result}
+                                                    output_list.append(form_msg)
+                                                    #exfiltrate_data(form_msg)
                                                     if pid_int == int(received_pid):
                                                         if pid_int == int("0C", 16):
                                                             rpm = result
@@ -226,9 +230,10 @@ if(REPORT):
                                                 for c in list(response.data)[-3:]:
                                                     result += chr(c)
                                                 message = "{description}: {result}".format(description=description, result=result)
-                                                form_msg = "{\"name\":"+str(description)+"," + "\"value\":"+str(result)+"}"
+                                                form_msg = {"name":str(description),"value":result}
+                                                output_list.append(form_msg)
                                                 _output_message(message)
-                                                exfiltrate_data(form_msg)
+                                                #exfiltrate_data(form_msg)
                                             except:
                                                 _output_message("Unable to parse response: {}.".format(response.data))
                             except can.CanError:
@@ -237,6 +242,8 @@ if(REPORT):
                 end = time.time()
                 hours, rem = divmod(end - start, 3600)
                 minutes, seconds = divmod(rem, 60)
+    exfiltrate_data(output_list)
+
 
 
 if(GET):

@@ -1,1 +1,3 @@
 node_modules/
+liquibase.properties
+config.json
