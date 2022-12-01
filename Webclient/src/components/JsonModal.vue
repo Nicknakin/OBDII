@@ -48,7 +48,6 @@ export default {
   },
   methods: {
     toggleModal: function(){
-      console.log(JSON.stringify(this.data, null, 4));
       this.showModal = !this.showModal;
     }
   }

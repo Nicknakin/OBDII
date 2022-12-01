@@ -24,10 +24,10 @@
                 </thead>
                 <tbody class="bg-gray-300">
                   <tr v-for = "(row, index) in history" :key='row.time'> 
-                    <td :class="index%2==1? 'bg-gray-200':'bg-gray-300' + ' px-1'" v-for="field in fields" :key='field'>
-                    <div v-if="typeof(row[field]) != 'object' || row[field] == null" :ref="setRef">{{row[field]}}</div>
+                    <td :class="(index%2==1? 'bg-gray-200':'bg-gray-300') + ' px-1'" v-for="field in fields" :key='field'>
+                    <div v-if="typeof(row[field]) != 'object' || row[field] == null">{{row[field]}}</div>
                     <div class="text-xs" v-if="typeof(row[field]) == 'object' && row[field]">
-                      <JsonModal :data="row[field]" :ref="setRef"/>
+                      <JsonModal :data="row[field]"/>
                       <div class="cursor-pointer bg-gray-700 hover:bg-gray-500 text-white font-bold m-2 py-1 px-1 rounded" @click="openModal">View More</div>
                     </div>
                     </td>
@@ -64,20 +64,25 @@ import JsonModal from "@/components/JsonModal.vue";
         history: [],
         headers: {"endpoint":"Endpoint", "response":"Response", "requestTime":"Request Time", "responseTime":"Response Time"},
         fields: ["endpoint", "response", "requestTime", "responseTime"],
-        modals: [],
         //Object to store search parameters 
         searchSettings: {
-          count: 100,
-          start: 0,
-          //TODO implement some cooler search settings like a filter!
+          count: this.$route.query.count ?? 100,
+          start: this.$route.query.start ?? 0,
         },
       };
     },
     created(){
-      fetch(`${location.protocol}//${location.host}/api/history`)
+      let headers = new Headers();
+      headers.append("Content-Type", "application/json");
+      fetch(`${location.protocol}//${location.host}/api/history`, {
+        body: JSON.stringify(this.searchSettings),
+        method: "POST",
+        headers,
+      })
       .then(response => response.json())
       .then(data => {
         this.history = data.rows;
+        this.history.forEach(row => row.response = JSON.parse(row.response));
       });
     },
     methods: {
@@ -89,9 +94,6 @@ import JsonModal from "@/components/JsonModal.vue";
 
         //TODO Handle response and populate history list
 
-      },
-      setRef(el) {
-        this.modals.push(el);
       },
       openModal(el) {
         el.target.parentElement.children[0].__vueParentComponent.ctx.toggleModal();

@@ -25,7 +25,7 @@ import { CodeIcon, DatabaseIcon, HomeIcon } from "@heroicons/vue/outline";
 const navigation = [
   { name: "Dashboard", href: "/", icon: HomeIcon, current: false },
   { name: "Send A Custom Query", href: "/query", icon: CodeIcon, current: false },
-  { name: "View Database Query History", href: "/history", icon: DatabaseIcon, current: false },
+  { name: "View Database Query History", href: "/history?count=100&start=1", icon: DatabaseIcon, current: false },
 ]
 </script>
 

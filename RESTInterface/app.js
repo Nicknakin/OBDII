@@ -1,7 +1,10 @@
 import { readFile } from 'fs/promises';
 import { spawn } from 'child_process'
 import express from 'express'
+import bodyParser from 'body-parser';
 const app = express();
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 
 import mariadb from 'mariadb';
 import config from './config.json' assert { type: 'json' };
@@ -58,32 +61,15 @@ app.get("/full-dump", (req, res) => {
 //TODO Endpoint to run a manual query
 app.get("/manual-query", (req, res) => {
   const requestTime = Date.now()
-  //Spawn program
-  const pyProgram = spawn(runner, [program]);
-  //Prepare output string
-  let str = "";
+  const response = {};
 
-  //On program exit handler
-  pyProgram.on('exit', (code, signal) => {
-    //Construct response object
-    const response = {
-      code,
-      signal,
-      diagnostics: [],//JSON.parse(str),
-    };
-
-    //Log request and respond
-    logHistory({ endpoint: "/manual-query", requestTime, responseTime: new Date(), response });
-    res.end(JSON.stringify(response));
-  }).stdout.on('data', (data) => { // On output handler
-    str += data.toString();
-  })
+  //Log request and respond
+  logHistory({ endpoint: "/manual-query", requestTime, responseTime: new Date(), response });
+  res.end(JSON.stringify(response));
 });
 
-app.get("/history", async (req, res) => {
-  const requestTime = Date.now()
-  let response = await getHistory(req.body.searchParams ?? {});
-  logHistory({ endpoint: "/history", requestTime, responseTime: new Date(), });
+app.post("/history", async (req, res) => {
+  let response = await getHistory(req?.body ?? {});
   res.end(JSON.stringify(response));
 });
 
