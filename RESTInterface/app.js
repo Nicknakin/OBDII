@@ -78,6 +78,7 @@ app.get("/clear-dtc", (_, res) => {
 app.post("/manual-query", (req, res) => {
   const requestTime = Date.now()
   const { service, pid } = req?.body;
+  console.log(`-s ${service} ${pid}`);
   const pyProgram = spawn(runner, [`-s ${service} ${pid}`], { shell: true });
   pyProgram.on('exit', async (code, signal) => {
     let data;
