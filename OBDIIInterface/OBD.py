@@ -73,7 +73,12 @@ else:
 if args.specific:
     SPECIFIC = True
     print(args.specific)
-
+    specific_mode = int(args.specific[0])
+    specific_pid = int(args.specific[1],16)
+    if (not args.specific[0] or not args.specific[1]):
+        exit("OBD.py -s/--specific usage:\n OBD.py -s [Service Mode] [PID(hex)]")
+else:
+    SPECIFIC = False
 if args.get == True:
     GET = True
 else:
@@ -128,7 +133,7 @@ def _output_message(message):
         if(DEBUG):print("Log fail")
         _output_message("[##LOG##] An exception of type {0} occurred. Arguments:\n{1!r}".format(type(e).__name__,e.args))
 
-def exfiltrate_data(data):
+def exfiltrate_data(data, file = exported_data_file):
     """Send the data read from the OBD-II port to a JSON log to be read. This is the main output function
 
     Args:
@@ -139,7 +144,7 @@ def exfiltrate_data(data):
     """
     try:
         #output_file = os.path.join(log_folder,exported_data_file)
-        f = open(exported_data_file, "a+",encoding="utf-8")
+        f = open(file, "a+",encoding="utf-8")
         f.write(json.dumps(data, indent=1)+"\n")
         f.flush()
         f.close()
@@ -275,7 +280,6 @@ if(GET):
             D = list(response.data)[6]
             _output_message("DTC: {} {} {} {} {}".format(DTC_class,A,B,C,D))
             data_log = (DTC_class,A,B,C,D)
-            #TODO: Format message for JSON e.g. form_msg = "\"name\""+":"+description+"," + "\"value\""+":"+result
             exfiltrate_data(data_log)
     except can.CanError:
         _output_message("CAN Error while getting DTCs")
@@ -305,3 +309,53 @@ if(CLEAR):
                 break
         except can.CanError:
             _output_message("CAN Error while clearing DTCs")
+
+
+if(SPECIFIC):
+    msg = can.Message(arbitration_id=0x7DF, data=[2, specific_mode, specific_pid, 0, 0, 0, 0, 0], is_extended_id=False)
+    if(DEBUG):_output_message("Sending: {}".format(msg))
+    try:
+        bus.send(msg)
+        time.sleep(0.05)
+        for i in range(0, 2):
+            time.sleep(0.05)
+            response = bus.recv(timeout=0.5)
+            if not response:
+                message = "No response from CAN bus. Service: {} PID: {} - {}".format(service_id.zfill(2), pid.zfill(2), description)
+                _output_message(message)
+                break
+            if response:
+                #https://en.wikipedia.org/wiki/OBD-II_PIDs#Standard_PIDs
+                responseList = list(response.data)
+                received_pid = list(response.data)[2]
+                A = list(response.data)[3]
+                B = list(response.data)[4]
+                if len(responseList) >= 6:
+                    C = list(response.data)[5]
+                if len(responseList) >= 7:
+                    D = list(response.data)[6]
+                if service_id == "1":
+                    if len(formula) > 0:
+                        try:
+                            result = eval(formula)
+                            message = "{description}: {result}".format(description=description, result=result)
+                            _output_message(message)
+                            form_msg = {"name":str(description),"value":result}
+                            output_list.append(form_msg)
+                        except:
+                            _output_message("Unable to parse formula: {}.".format(formula))
+                if service_id == "9":
+                    result = ""
+                    try:
+                        for c in list(response.data)[-3:]:
+                            result += chr(c)
+                        message = "{description}: {result}".format(description=description, result=result)
+                        form_msg = {"name":str(description),"value":result}
+                        output_list.append(form_msg)
+                        _output_message(message)
+                        #exfiltrate_data(form_msg)
+                    except:
+                        _output_message("Unable to parse response: {}.".format(response.data))
+    except can.CanError:
+        _output_message("CAN error")
+exfiltrate_data(form_msg,'specific_export.json')
