@@ -20,5 +20,23 @@
       </column>
     </createTable>
   </changeSet>
+
+  <changeSet id="main-2" author="Nicholas Kinney">
+    <createTable tableName="PIDS">
+      <column name="Enabled" type="varchar(255)"/>
+      <column name="Mode (hex)" type="varchar(255)"/>
+      <column name="PID (hex)" type="varchar(255)"/>
+      <column name="Data bytes returned" type="varchar(255)"/>
+      <column name="Description" type="varchar(255)"/>
+      <column name="Min value" type="varchar(255)"/>
+      <column name="Max value" type="varchar(255)"/>
+      <column name="Units" type="varchar(255)"/>
+      <column name="Formula" type="varchar(255)"/>
+    </createTable>
+  </changeSet>
+
+  <changeSet id="main-3" author="Nicholas Kinney">
+    <loadData file="../OBDIIInterface/obd_enabled_pids.csv" primaryKey="PID (hex)" tableName="PIDS"/>
+  </changeSet>
 </databaseChangeLog>
 

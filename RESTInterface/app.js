@@ -47,8 +47,9 @@ app.get("/full-dump", (req, res) => {
     };
 
     //Log request and respond
-    logHistory({ endpoint: "/full-dump", requestTime, responseTime: new Date(), response });
     res.end(JSON.stringify(response));
+    logHistory({ endpoint: "/full-dump", requestTime, responseTime: new Date(), response });
+    logSupportedPids(response.diagnostics);
   }).stdout.on('data', (data) => { // On output handler
     console.log(data.toString());
   })
@@ -134,6 +135,7 @@ async function getHistory(data) {
       SELECT endpoint, response, requestTime, responseTime 
       FROM History h
       WHERE h.id>=${data.start}
+      ORDER BY requestTime DESC
       LIMIT ${data.count};`)
         .then(rows => {
           conn.end();
@@ -146,3 +148,21 @@ async function getHistory(data) {
         });
     });
 };
+
+async function logSupportedPids(data) {
+  data = data.map(val => val.name);
+  return pool.getConnection()
+    .then(conn => {
+      conn.query(`
+      INSERT INTO History (endpoint, response, requestTime, responseTime)
+      VALUES (?, ?, ?, ?);`, [data.endpoint, JSON.stringify(data.response) ?? null, data.requestTime, data.responseTime])
+        .then(res => {
+          console.log(res);
+          conn.end();
+        })
+        .catch(err => {
+          console.error(err);
+          conn.end();
+        });
+    });
+}
