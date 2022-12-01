@@ -335,7 +335,7 @@ if(SPECIFIC):
                     C = list(response.data)[5]
                 if len(responseList) >= 7:
                     D = list(response.data)[6]
-                if service_id == "1":
+                if specific_mode == "1":
                     if len(formula) > 0:
                         try:
                             result = eval(formula)
@@ -345,7 +345,7 @@ if(SPECIFIC):
                             output_list.append(form_msg)
                         except:
                             _output_message("Unable to parse formula: {}.".format(formula))
-                if service_id == "9":
+                if specific_mode == "9":
                     result = ""
                     try:
                         for c in list(response.data)[-3:]:
