@@ -11,7 +11,6 @@
             <!-- Search bar goes here -->
             <div class="py-4">
             <!-- Response is parsed and populates this region -->
-              <div class="h-96 rounded-lg border-4 border-dashed border-gray-200" />
             </div>
           </div>
         </div>
