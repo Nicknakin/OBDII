@@ -72,7 +72,7 @@ else:
     CLEAR = False
 if args.specific:
     SPECIFIC = True
-    print(args.specific)
+    if(DEBUG):print(args.specific)
     specific_mode = int(args.specific[0])
     specific_pid = int(args.specific[1],16)
     if (not args.specific[0] or not args.specific[1]):
@@ -342,6 +342,14 @@ if(SPECIFIC):
                     if len(formula) > 0:
                         try:
                             result = eval(formula)
+                            message = "{description}: {result}".format(description=description, result=result)
+                            _output_message(message)
+                            form_msg = {"name":str(description),"value":result}
+                            output_list.append(form_msg)
+                        except:
+                            _output_message("Unable to parse formula: {}.".format(formula))
+                    else:
+                        try:
                             message = "{description}: {result}".format(description=description, result=result)
                             _output_message(message)
                             form_msg = {"name":str(description),"value":result}
