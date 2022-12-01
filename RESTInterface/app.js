@@ -58,14 +58,48 @@ app.get("/full-dump", (req, res) => {
   })
 });
 
-//TODO Endpoint to run a manual query
+
+app.get("/clear-dtc", (_, res) => {
+  const requestTime = Date.now()
+  const pyProgram = spawn(runner, ["-c"], { shell: true });
+  pyProgram.on('exit', (code, signal) => {
+    const response = {
+      code,
+      signal,
+    };
+
+    //Log request and respond
+    res.end(JSON.stringify(response));
+    logHistory({ endpoint: "/clear-dtc", requestTime, responseTime: new Date(), response });
+  });
+});
+
+//Endpoint to run a manual query
 app.get("/manual-query", (req, res) => {
   const requestTime = Date.now()
-  const response = {};
+  const { service, pid } = req.data;
+  const pyProgram = spawn(runner, [`-s ${service} ${pid}`], { shell: true });
+  pyProgram.on('exit', async (code, signal) => {
+    let data;
+    if (code == 0) {
+      data = JSON.parse(
+        await readFile(
+          new URL('./specific_export.json', import.meta.url)
+        )
+      );
+    }
 
-  //Log request and respond
-  logHistory({ endpoint: "/manual-query", requestTime, responseTime: new Date(), response });
-  res.end(JSON.stringify(response));
+    //Construct response object
+    const response = {
+      code,
+      signal,
+      response: data,
+    };
+
+    //Log request and respond
+    res.end(JSON.stringify(response));
+    logHistory({ endpoint: "/manual-query", requestTime, responseTime: new Date(), response });
+  });
 });
 
 app.post("/history", async (req, res) => {
