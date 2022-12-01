@@ -58,7 +58,7 @@ parser = argparse.ArgumentParser(description= "OBD2 Program meant to extract dat
 parser.add_argument('-g','--get', help = 'Get the current Diagnostic Troubleshooting Codes (DTCs) from the vehicle', action='store_true')
 parser.add_argument('-c','--clear',help = 'Clear the current DTCs from the vehicle',action='store_true')
 parser.add_argument('-r','--report',help='Read current sensor values',action='store_true')
-parser.add_argument('-s','--specific',help='Get Specific PID, Usage: -s [Service Mode] [PID]',required=False,nargs='+',action='store_const')
+parser.add_argument('-s','--specific',help='Get Specific PID, Usage: -s [Service Mode] [PID]',required=False,nargs='+')
 parser.add_argument('-d','--debug',help = 'Print debug information to terminal',action='store_true')
 args = parser.parse_args()
 
