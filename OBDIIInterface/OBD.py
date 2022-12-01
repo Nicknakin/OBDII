@@ -329,7 +329,7 @@ if(SPECIFIC):
     #Clear the current value of export_data.json
     with open('specific_export.json','w') as f:
         pass
-    msg = can.Message(arbitration_id=0x7DF, data=[2, int(specific_mode, 16), int(specific_pid, 16), 0, 0, 0, 0, 0], is_extended_id=False)
+    msg = can.Message(arbitration_id=0x7DF, data=[2, int(str(specific_mode), 16), int(str(specific_pid), 16), 0, 0, 0, 0, 0], is_extended_id=False)
     if(DEBUG):_output_message("Sending: {}".format(msg))
     output_list = list()
     try:
