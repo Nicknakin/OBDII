@@ -312,6 +312,9 @@ if(CLEAR):
 
 
 if(SPECIFIC):
+    #Clear the current value of export_data.json
+    with open('specific_export.json','w') as f:
+        pass
     msg = can.Message(arbitration_id=0x7DF, data=[2, specific_mode, specific_pid, 0, 0, 0, 0, 0], is_extended_id=False)
     if(DEBUG):_output_message("Sending: {}".format(msg))
     output_list = list()
@@ -322,7 +325,7 @@ if(SPECIFIC):
             time.sleep(0.05)
             response = bus.recv(timeout=0.5)
             if not response:
-                message = "No response from CAN bus. Service: {} PID: {} - {}".format(service_id.zfill(2), pid.zfill(2), description)
+                message = "No response from CAN bus. Service: {} PID: {} - {}".format(specific_mode.zfill(2), specific_pid.zfill(2), description)
                 _output_message(message)
                 break
             if response:
