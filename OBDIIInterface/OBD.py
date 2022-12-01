@@ -54,10 +54,11 @@ exfiltrate_data_time = 2
 
 
 ############## PARSE CLI COMMANDS ##############
-parser = argparse.ArgumentParser(description= "OBD2 Test Program")
+parser = argparse.ArgumentParser(description= "OBD2 Program meant to extract data from any vehicle manufactured after 1996")
 parser.add_argument('-g','--get', help = 'Get the current Diagnostic Troubleshooting Codes (DTCs) from the vehicle', action='store_true')
 parser.add_argument('-c','--clear',help = 'Clear the current DTCs from the vehicle',action='store_true')
 parser.add_argument('-r','--report',help='Read current sensor values',action='store_true')
+parser.add_argument('-s','--specific',help='Get Specific PID, Usage: -s [Service Mode] [PID]',required=False,nargs='+',action='store_const')
 parser.add_argument('-d','--debug',help = 'Print debug information to terminal',action='store_true')
 args = parser.parse_args()
 
@@ -69,6 +70,10 @@ if args.clear == True:
     CLEAR = True
 else: 
     CLEAR = False
+if args.specific:
+    SPECIFIC = True
+    print(args.specific)
+
 if args.get == True:
     GET = True
 else:
@@ -278,7 +283,7 @@ if(GET):
 
 if(CLEAR):
     _output_message("Starting CLEAR")
-    msg = can.Message(arbitration_id=0x7DE, data=[0, 4], is_extended_id=False, is_rx=False)
+    msg = can.Message(arbitration_id=0x7DE, data=[4], is_extended_id=False, is_rx=False)
     for i in range(0,10):
         try:
             _output_message("Attempting to clear DTCs...")
