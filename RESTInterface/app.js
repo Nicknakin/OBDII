@@ -75,7 +75,7 @@ app.get("/clear-dtc", (_, res) => {
 });
 
 //Endpoint to run a manual query
-app.get("/manual-query", (req, res) => {
+app.post("/manual-query", (req, res) => {
   const requestTime = Date.now()
   const { service, pid } = req?.body;
   const pyProgram = spawn(runner, [`-s ${service} ${pid}`], { shell: true });
