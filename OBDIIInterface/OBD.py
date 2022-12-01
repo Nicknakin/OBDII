@@ -319,10 +319,10 @@ if(SPECIFIC):
                 description = ""
                 formula=""
                 enabled = False
-                if specific_mode in row["Mode (hex)"]:
+                if str(specific_mode) in row["Mode (hex)"]:
                     service_id = row["Mode (hex)"]
                     service_int = int(service_id, 16)
-                if specific_pid in row["PID (hex)"]:
+                if str(specific_pid) in row["PID (hex)"]:
                     pid = row["PID (hex)"]
                     pid_int = int(pid, 16)
                 if "Description" in row:
