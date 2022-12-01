@@ -311,10 +311,28 @@ if(CLEAR):
 
 
 if(SPECIFIC):
+    with open(csv_file_path, mode='r') as infile:
+            reader = csv.DictReader(infile)
+            for row in reader:
+                service_id = -1
+                pid = -1
+                description = ""
+                formula=""
+                enabled = False
+                if specific_mode in row["Mode (hex)"]:
+                    service_id = row["Mode (hex)"]
+                    service_int = int(service_id, 16)
+                if specific_pid in row["PID (hex)"]:
+                    pid = row["PID (hex)"]
+                    pid_int = int(pid, 16)
+                if "Description" in row:
+                    description = row["Description"]
+                if "Formula" in row:
+                    formula = row["Formula"]
     #Clear the current value of export_data.json
     with open('specific_export.json','w') as f:
         pass
-    msg = can.Message(arbitration_id=0x7DF, data=[2, specific_mode, specific_pid, 0, 0, 0, 0, 0], is_extended_id=False)
+    msg = can.Message(arbitration_id=0x7DF, data=[2, service_int, pid_int, 0, 0, 0, 0, 0], is_extended_id=False)
     if(DEBUG):_output_message("Sending: {}".format(msg))
     output_list = list()
     try:
