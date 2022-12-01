@@ -342,7 +342,7 @@ if(SPECIFIC):
             time.sleep(0.05)
             response = bus.recv(timeout=0.5)
             if not response:
-                message = "No response from CAN bus. Service: {} PID: {} - {}".format(str(service_id).zfill(2), str(pid).zfill(2), description)
+                message = "No response from CAN bus. Service: {} PID: {} - {}".format(service_id, pid, description)
                 _output_message(message)
                 break
             if response:
