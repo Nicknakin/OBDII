@@ -72,7 +72,6 @@ else:
     CLEAR = False
 if args.specific:
     SPECIFIC = True
-    if(DEBUG):print(args.specific)
     specific_mode = int(args.specific[0])
     specific_pid = int(args.specific[1],16)
     if (not args.specific[0] or not args.specific[1]):
