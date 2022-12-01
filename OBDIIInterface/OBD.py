@@ -319,20 +319,17 @@ if(SPECIFIC):
                 description = ""
                 formula=""
                 enabled = False
-                if str(specific_mode) in row["Mode (hex)"]:
-                    service_id = row["Mode (hex)"]
-                    service_int = int(service_id, 16)
-                if str(specific_pid) in row["PID (hex)"]:
-                    pid = row["PID (hex)"]
-                    pid_int = int(pid, 16)
-                if "Description" in row:
-                    description = row["Description"]
-                if "Formula" in row:
-                    formula = row["Formula"]
+                if row["Mode (hex)"] == str(specific_mode) and str(specific_pid) in row["PID (hex)"]:
+                    if "Description" in row:
+                        description = row["Description"]
+                    if "Formula" in row:
+                        formula = row["Formula"]
+                    break
+
     #Clear the current value of export_data.json
     with open('specific_export.json','w') as f:
         pass
-    msg = can.Message(arbitration_id=0x7DF, data=[2, service_int, pid_int, 0, 0, 0, 0, 0], is_extended_id=False)
+    msg = can.Message(arbitration_id=0x7DF, data=[2, int(service_mode, 16), int(specific_pid), 0, 0, 0, 0, 0], is_extended_id=False)
     if(DEBUG):_output_message("Sending: {}".format(msg))
     output_list = list()
     try:
