@@ -36,7 +36,7 @@
   </changeSet>
 
   <changeSet id="main-3" author="Nicholas Kinney">
-    <loadData file="../OBDIIInterface/obd_enabled_pids.csv" tableName="PIDS"/>
+    <loadData file="../OBDIIInterface/obd_enabled_pids.liquibase.csv" tableName="PIDS"/>
   </changeSet>
 
   <changeSet id="main-4" author="Nicholas Kinney">
