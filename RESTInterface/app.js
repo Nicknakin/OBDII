@@ -100,7 +100,9 @@ app.post("/manual-query", (req, res) => {
     //Log request and respond
     res.end(JSON.stringify(response));
     logHistory({ endpoint: "/manual-query", requestTime, responseTime: new Date(), response });
-  });
+  }).stdout.on('data', (data) => { // On output handler
+    console.log(data.toString());
+  })
 });
 
 app.post("/history", async (req, res) => {
