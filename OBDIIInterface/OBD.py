@@ -358,4 +358,4 @@ if(SPECIFIC):
                         _output_message("Unable to parse response: {}.".format(response.data))
     except can.CanError:
         _output_message("CAN error")
-exfiltrate_data(form_msg,'specific_export.json')
+exfiltrate_data(output_list,'specific_export.json')
