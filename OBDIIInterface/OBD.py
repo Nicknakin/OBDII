@@ -72,8 +72,8 @@ else:
     CLEAR = False
 if args.specific:
     SPECIFIC = True
-    specific_mode = int(args.specific[0])
-    specific_pid = int(args.specific[1],16)
+    specific_mode = str(args.specific[0])
+    specific_pid = str(args.specific[1])
     if (not args.specific[0] or not args.specific[1]):
         exit("OBD.py -s/--specific usage:\n OBD.py -s [Service Mode] [PID(hex)]")
 else:
