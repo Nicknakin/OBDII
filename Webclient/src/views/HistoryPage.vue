@@ -82,7 +82,6 @@ import JsonModal from "@/components/JsonModal.vue";
       .then(response => response.json())
       .then(data => {
         this.history = data.rows;
-        this.history.forEach(row => row.response = JSON.parse(row.response));
       });
     },
     methods: {
