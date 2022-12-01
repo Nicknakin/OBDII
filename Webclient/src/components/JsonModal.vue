@@ -1,7 +1,7 @@
 <template>
   <div>
-    <div v-if="showModal" class="overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none justify-center items-center flex">
-      <div class="relative w-auto my-6 mx-auto max-w-6xl">
+    <div v-if="showModal" class="overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none justify-center items-center flex h-screen">
+      <div class="relative my-auto py-4 max-w-6xl px-4">
         <!--content-->
         <div class="border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none">
           <!--header-->
@@ -17,7 +17,7 @@
           </div>
           <!--body-->
           <div class="relative p-6 flex-auto">
-            <p class="my-4 text-slate-500 text-lg leading-relaxed">{{JSON.stringify(data)}}</p>
+            <pre>{{JSON.stringify(data, null, 2) }}</pre>
           </div>
           <!--footer-->
           <div class="flex items-center justify-end p-6 border-t border-solid border-slate-200 rounded-b">
@@ -48,6 +48,7 @@ export default {
   },
   methods: {
     toggleModal: function(){
+      console.log(JSON.stringify(this.data, null, 4));
       this.showModal = !this.showModal;
     }
   }

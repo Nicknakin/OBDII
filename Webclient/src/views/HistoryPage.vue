@@ -3,7 +3,7 @@
     <!-- Static sidebar for desktop -->
     <SideBar active='View Database Query History' />
     <!-- This is the dashboard -->
-    <div class="flex flex-1 flex-col md:pl-64">
+    <div class="bg-gray-900 flex flex-1 flex-col md:pl-64">
       <main>
         <div class="min-h-screen py-6 h-screen bg-gray-900">
           <div class="mx-auto max-w-7xl px-4 sm:px-6 md:px-8">
@@ -28,7 +28,7 @@
                     <div v-if="typeof(row[field]) != 'object' || row[field] == null" :ref="setRef">{{row[field]}}</div>
                     <div class="text-xs" v-if="typeof(row[field]) == 'object' && row[field]">
                       <JsonModal :data="row[field]" :ref="setRef"/>
-                      <div @click="this.modals[index].toggleModal">View More</div>
+                      <div class="bg-gray-700 hover:bg-gray-500 text-white font-bold m-2 py-1 px-1 rounded" @click="openModal">View More</div>
                     </div>
                     </td>
                   </tr>
@@ -85,6 +85,9 @@ import JsonModal from "@/components/JsonModal.vue";
       },
       setRef(el) {
         this.modals.push(el);
+      },
+      openModal(el) {
+        el.target.parentElement.children[0].__vueParentComponent.ctx.toggleModal();
       }
     },
   };
