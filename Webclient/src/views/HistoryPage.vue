@@ -4,12 +4,12 @@
     <SideBar active='View Database Query History' />
     <!-- This is the dashboard -->
     <div class="bg-gray-900 flex flex-1 flex-col md:pl-64">
-      <main>
+      <main class="w-full">
         <div class="min-h-screen py-6 h-screen bg-gray-900">
           <div class="mx-auto max-w-7xl px-4 sm:px-6 md:px-8">
             <h1 class="text-2xl font-semibold text-gray-50">History</h1>
           </div>
-          <div class="bg-gray-900 mx-auto max-w-7xl px-4 sm:px-6 md:px-8">
+          <div class="bg-gray-900 w-full mx-auto max-w-7xl px-4 sm:px-6 md:px-8">
             <!-- Replace with your content -->
             <!-- Throw up a little table here -->
             
@@ -28,7 +28,7 @@
                     <div v-if="typeof(row[field]) != 'object' || row[field] == null" :ref="setRef">{{row[field]}}</div>
                     <div class="text-xs" v-if="typeof(row[field]) == 'object' && row[field]">
                       <JsonModal :data="row[field]" :ref="setRef"/>
-                      <div class="bg-gray-700 hover:bg-gray-500 text-white font-bold m-2 py-1 px-1 rounded" @click="openModal">View More</div>
+                      <div class="cursor-pointer bg-gray-700 hover:bg-gray-500 text-white font-bold m-2 py-1 px-1 rounded" @click="openModal">View More</div>
                     </div>
                     </td>
                   </tr>
@@ -41,6 +41,13 @@
     </div>
   </div>
 </template>
+
+<style>
+  html {
+    --tw-bg-opacity: 1;
+    background-color: rgb(17 24 39 / var(--tw-bg-opacity)) !important;
+  }
+</style>
 
 <script setup>
 import SideBar from "@/components/SideBar.vue";

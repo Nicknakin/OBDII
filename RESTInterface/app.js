@@ -24,7 +24,6 @@ const server = app.listen(8081, function() {
   console.log("OBDII - REST Server listening at http://%s:%s", host, port);
 })
 
-//TODO Endpoint to get all info from the car
 app.get("/full-dump", (req, res) => {
   const requestTime = Date.now()
   //Spawn program
@@ -32,12 +31,14 @@ app.get("/full-dump", (req, res) => {
   //On program exit handler
   pyProgram.on('exit', async (code, signal) => {
     let data;
-    if (code == 0)
+    if (code == 0) {
       data = JSON.parse(
         await readFile(
           new URL('./export_data.json', import.meta.url)
         )
       );
+      logSupportedPids(data);
+    }
 
     //Construct response object
     const response = {
@@ -49,7 +50,6 @@ app.get("/full-dump", (req, res) => {
     //Log request and respond
     res.end(JSON.stringify(response));
     logHistory({ endpoint: "/full-dump", requestTime, responseTime: new Date(), response });
-    logSupportedPids(response.diagnostics);
   }).stdout.on('data', (data) => { // On output handler
     console.log(data.toString());
   })
@@ -80,30 +80,22 @@ app.get("/manual-query", (req, res) => {
   })
 });
 
-//TODO Endpoint to get history of requests
-//TODO Default last ~100 entries, expect req.body.count to hold requested count of entries (max 1000)
-//TODO Default start from most recent, expect req.body.start to hold the requested start index (skip n many entries)
-app.get("/history", async (_req, res) => {
+app.get("/history", async (req, res) => {
   const requestTime = Date.now()
-  //TODO Get history of all requests
-  let response = await getHistory({});
-  // Log request and respond
+  let response = await getHistory(req.body.searchParams ?? {});
   logHistory({ endpoint: "/history", requestTime, responseTime: new Date(), });
   res.end(JSON.stringify(response));
 });
 
-//TODO Endpoint that gets the supported PIDS from the python program
-app.get("/supported-pids", (_req, res) => {
+//Endpoint that gets the supported PIDS from the python program
+app.get("/supported-pids", async (_req, res) => {
   const requestTime = Date.now()
-  //TODO Start python program with arguments to get supported pids
 
-  //TODO Prepare output string
-
-  //TODO Define handlers for python program
+  let response = await getSupportedPids();
 
   // Log request and respond TODO Put inside of program exit handler
   logHistory({ endpoint: "/history", requestTime, responseTime: new Date(), response });
-  res.end(/*TODO Data goes here*/);
+  res.end(JSON.stringify(response));
 });
 
 function logHistory(data) {
@@ -154,8 +146,9 @@ async function logSupportedPids(data) {
   return pool.getConnection()
     .then(conn => {
       conn.query(`
-      INSERT INTO History (endpoint, response, requestTime, responseTime)
-      VALUES (?, ?, ?, ?);`, [data.endpoint, JSON.stringify(data.response) ?? null, data.requestTime, data.responseTime])
+      TRUNCATE ActivePIDS;
+      INSERT INTO ActivePIDS (Description)
+      VALUES ${data.map(val => `("${val}")`).join(',')}`)
         .then(res => {
           console.log(res);
           conn.end();
@@ -163,6 +156,24 @@ async function logSupportedPids(data) {
         .catch(err => {
           console.error(err);
           conn.end();
+        });
+    });
+}
+
+async function getSupportedPids() {
+  return pool.getConnection()
+    .then(async conn => {
+      return conn.query(`
+      SELECT pid.Description, 'pid.PID (hex)' FROM PIDS pid
+      INNER JOIN ActivePIDS ap on ap.Description=pid.Description;`)
+        .then(rows => {
+          conn.end();
+          return { Success: true, rows };
+        })
+        .catch(err => {
+          console.error(err);
+          conn.end();
+          return { Success: false, err };
         });
     });
 }
