@@ -314,6 +314,7 @@ if(CLEAR):
 if(SPECIFIC):
     msg = can.Message(arbitration_id=0x7DF, data=[2, specific_mode, specific_pid, 0, 0, 0, 0, 0], is_extended_id=False)
     if(DEBUG):_output_message("Sending: {}".format(msg))
+    output_list = list()
     try:
         bus.send(msg)
         time.sleep(0.05)
