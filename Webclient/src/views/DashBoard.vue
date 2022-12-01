@@ -57,7 +57,7 @@
       .then(response => response.json())
       .then(data => {
         this.diagnostics = data.diagnostics;
-        loading = false;
+        this.loading = false;
       });
     }
   };

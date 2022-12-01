@@ -54,10 +54,11 @@ exfiltrate_data_time = 2
 
 
 ############## PARSE CLI COMMANDS ##############
-parser = argparse.ArgumentParser(description= "OBD2 Test Program")
+parser = argparse.ArgumentParser(description= "OBD2 Program meant to extract data from any vehicle manufactured after 1996")
 parser.add_argument('-g','--get', help = 'Get the current Diagnostic Troubleshooting Codes (DTCs) from the vehicle', action='store_true')
 parser.add_argument('-c','--clear',help = 'Clear the current DTCs from the vehicle',action='store_true')
 parser.add_argument('-r','--report',help='Read current sensor values',action='store_true')
+parser.add_argument('-s','--specific',help='Get Specific PID, Usage: -s [Service Mode] [PID]',required=False,nargs='+')
 parser.add_argument('-d','--debug',help = 'Print debug information to terminal',action='store_true')
 args = parser.parse_args()
 
@@ -69,6 +70,14 @@ if args.clear == True:
     CLEAR = True
 else: 
     CLEAR = False
+if args.specific:
+    SPECIFIC = True
+    specific_mode = str(args.specific[0])
+    specific_pid = str(args.specific[1])
+    if (not args.specific[0] or not args.specific[1]):
+        exit("OBD.py -s/--specific usage:\n OBD.py -s [Service Mode] [PID(hex)]")
+else:
+    SPECIFIC = False
 if args.get == True:
     GET = True
 else:
@@ -123,7 +132,7 @@ def _output_message(message):
         if(DEBUG):print("Log fail")
         _output_message("[##LOG##] An exception of type {0} occurred. Arguments:\n{1!r}".format(type(e).__name__,e.args))
 
-def exfiltrate_data(data):
+def exfiltrate_data(data, file = exported_data_file):
     """Send the data read from the OBD-II port to a JSON log to be read. This is the main output function
 
     Args:
@@ -134,7 +143,7 @@ def exfiltrate_data(data):
     """
     try:
         #output_file = os.path.join(log_folder,exported_data_file)
-        f = open(exported_data_file, "a+",encoding="utf-8")
+        f = open(file, "a+",encoding="utf-8")
         f.write(json.dumps(data, indent=1)+"\n")
         f.flush()
         f.close()
@@ -270,7 +279,6 @@ if(GET):
             D = list(response.data)[6]
             _output_message("DTC: {} {} {} {} {}".format(DTC_class,A,B,C,D))
             data_log = (DTC_class,A,B,C,D)
-            #TODO: Format message for JSON e.g. form_msg = "\"name\""+":"+description+"," + "\"value\""+":"+result
             exfiltrate_data(data_log)
     except can.CanError:
         _output_message("CAN Error while getting DTCs")
@@ -278,7 +286,7 @@ if(GET):
 
 if(CLEAR):
     _output_message("Starting CLEAR")
-    msg = can.Message(arbitration_id=0x7DE, data=[0, 4], is_extended_id=False, is_rx=False)
+    msg = can.Message(arbitration_id=0x7DE, data=[4], is_extended_id=False, is_rx=False)
     for i in range(0,10):
         try:
             _output_message("Attempting to clear DTCs...")
@@ -300,3 +308,80 @@ if(CLEAR):
                 break
         except can.CanError:
             _output_message("CAN Error while clearing DTCs")
+
+
+if(SPECIFIC):
+    service_id = int(str(specific_mode), 16)
+    pid = int(str(specific_pid), 16)
+    with open(csv_file_path, mode='r') as infile:
+            reader = csv.DictReader(infile)
+            for row in reader:
+                description = ""
+                formula=""
+                enabled = False
+                if row["Mode (hex)"] == str(specific_mode) and str(specific_pid) in row["PID (hex)"]:
+                    if "Description" in row:
+                        description = row["Description"]
+                    if "Formula" in row:
+                        formula = row["Formula"]
+                    break
+
+    #Clear the current value of export_data.json
+    with open('specific_export.json','w') as f:
+        pass
+    msg = can.Message(arbitration_id=0x7DF, data=[2, service_id, pid, 0, 0, 0, 0, 0], is_extended_id=False)
+    if(DEBUG):_output_message("Sending: {}".format(msg))
+    output_list = list()
+    try:
+        bus.send(msg)
+        time.sleep(0.05)
+        for i in range(0, 2):
+            time.sleep(0.05)
+            response = bus.recv(timeout=0.5)
+            if not response:
+                message = "No response from CAN bus. Service: {} PID: {} - {}".format(service_id, pid, description)
+                _output_message(message)
+                break
+            if response:
+                #https://en.wikipedia.org/wiki/OBD-II_PIDs#Standard_PIDs
+                responseList = list(response.data)
+                received_pid = list(response.data)[2]
+                A = list(response.data)[3]
+                B = list(response.data)[4]
+                if len(responseList) >= 6:
+                    C = list(response.data)[5]
+                if len(responseList) >= 7:
+                    D = list(response.data)[6]
+                if specific_mode == "1":
+                    if len(formula) > 0:
+                        try:
+                            result = eval(formula)
+                            message = "{description}: {result}".format(description=description, result=result)
+                            _output_message(message)
+                            form_msg = {"name":str(description),"value":result}
+                            output_list.append(form_msg)
+                        except:
+                            _output_message("Unable to parse formula: {}.".format(formula))
+                    else:
+                        try:
+                            message = "{description}: {result}".format(description=description, result=result)
+                            _output_message(message)
+                            form_msg = {"name":str(description),"value":result}
+                            output_list.append(form_msg)
+                        except:
+                            _output_message("Unable to parse formula: {}.".format(formula))
+                if specific_mode == "9":
+                    result = ""
+                    try:
+                        for c in list(response.data)[-3:]:
+                            result += chr(c)
+                        message = "{description}: {result}".format(description=description, result=result)
+                        form_msg = {"name":str(description),"value":result}
+                        output_list.append(form_msg)
+                        _output_message(message)
+                        #exfiltrate_data(form_msg)
+                    except:
+                        _output_message("Unable to parse response: {}.".format(response.data))
+    except can.CanError:
+        _output_message("CAN error")
+    exfiltrate_data(output_list,'specific_export.json')
