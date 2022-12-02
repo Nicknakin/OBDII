@@ -199,8 +199,8 @@ if(REPORT):
                                 bus.send(msg)
                                 time.sleep(0.05)
                                 for i in range(0, 2):
-                                    time.sleep(0.05)
-                                    response = bus.recv(timeout=0.5)
+                                    time.sleep(0.5)
+                                    response = bus.recv(timeout=2)
                                     if not response:
                                         message = "No response from CAN bus. Service: {} PID: {} - {}".format(service_id.zfill(2), pid.zfill(2), description)
                                         _output_message(message)
@@ -236,7 +236,7 @@ if(REPORT):
                                         if service_id == "9":
                                             result = ""
                                             try:
-                                                for c in list(response.data)[-3:]:
+                                                for c in list(response.data)[3:]:
                                                     result += chr(c)
                                                 message = "{description}: {result}".format(description=description, result=result)
                                                 form_msg = {"name":str(description),"value":result}
