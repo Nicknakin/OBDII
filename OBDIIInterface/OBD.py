@@ -236,7 +236,7 @@ if(REPORT):
                                         if service_id == "9":
                                             result = ""
                                             try:
-                                                for c in list(response.data)[-3:]:
+                                                for c in list(response.data)[3:]:
                                                     result += chr(c)
                                                 message = "{description}: {result}".format(description=description, result=result)
                                                 form_msg = {"name":str(description),"value":result}
@@ -373,7 +373,7 @@ if(SPECIFIC):
                 if specific_mode == "9":
                     result = ""
                     try:
-                        for c in list(response.data)[-3:]:
+                        for c in list(response.data)[3:]:
                             result += chr(c)
                         message = "{description}: {result}".format(description=description, result=result)
                         form_msg = {"name":str(description),"value":result}
