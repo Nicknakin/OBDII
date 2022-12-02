@@ -199,8 +199,8 @@ if(REPORT):
                                 bus.send(msg)
                                 time.sleep(0.05)
                                 for i in range(0, 2):
-                                    time.sleep(0.05)
-                                    response = bus.recv(timeout=0.5)
+                                    time.sleep(0.5)
+                                    response = bus.recv(timeout=0.2)
                                     if not response:
                                         message = "No response from CAN bus. Service: {} PID: {} - {}".format(service_id.zfill(2), pid.zfill(2), description)
                                         _output_message(message)
@@ -236,7 +236,7 @@ if(REPORT):
                                         if service_id == "9":
                                             result = ""
                                             try:
-                                                for c in list(response.data)[-3:]:
+                                                for c in list(response.data)[3:]:
                                                     result += chr(c)
                                                 message = "{description}: {result}".format(description=description, result=result)
                                                 form_msg = {"name":str(description),"value":result}
@@ -245,8 +245,8 @@ if(REPORT):
                                                 #exfiltrate_data(form_msg)
                                             except:
                                                 _output_message("Unable to parse response: {}.".format(response.data))
-                            except can.CanError:
-                                _output_message("CAN error")
+                            except can.CanError as e:
+                                _output_message("CAN error: {}".format(e))
 
                 end = time.time()
                 hours, rem = divmod(end - start, 3600)
@@ -280,8 +280,8 @@ if(GET):
             _output_message("DTC: {} {} {} {} {}".format(DTC_class,A,B,C,D))
             data_log = (DTC_class,A,B,C,D)
             exfiltrate_data(data_log)
-    except can.CanError:
-        _output_message("CAN Error while getting DTCs")
+    except can.CanError as e:
+        _output_message("CAN error: {}".format(e))
 
 
 if(CLEAR):
@@ -306,8 +306,8 @@ if(CLEAR):
                 D = list(response.data)[6]
                 _output_message("Recieved: {} {} {} {} {}\n".format(received_pid,A,B,C,D))
                 break
-        except can.CanError:
-            _output_message("CAN Error while clearing DTCs")
+        except can.CanError as e:
+            _output_message("CAN error: {}".format(e))
 
 
 if(SPECIFIC):
@@ -373,7 +373,7 @@ if(SPECIFIC):
                 if specific_mode == "9":
                     result = ""
                     try:
-                        for c in list(response.data)[-3:]:
+                        for c in list(response.data)[3:]:
                             result += chr(c)
                         message = "{description}: {result}".format(description=description, result=result)
                         form_msg = {"name":str(description),"value":result}
@@ -382,6 +382,6 @@ if(SPECIFIC):
                         #exfiltrate_data(form_msg)
                     except:
                         _output_message("Unable to parse response: {}.".format(response.data))
-    except can.CanError:
-        _output_message("CAN error")
+    except can.CanError as e:
+        _output_message("CAN error: {}".format(e))
     exfiltrate_data(output_list,'specific_export.json')

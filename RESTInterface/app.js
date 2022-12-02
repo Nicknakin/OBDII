@@ -34,13 +34,12 @@ app.get("/full-dump", (req, res) => {
   //On program exit handler
   pyProgram.on('exit', async (code, signal) => {
     let data;
-    if (code == 0) {
+    if (code == 0 | true) {
       data = JSON.parse(
         await readFile(
           new URL('./export_data.json', import.meta.url)
         )
       );
-      logSupportedPids(data);
     }
 
     //Construct response object
@@ -82,7 +81,7 @@ app.post("/manual-query", (req, res) => {
   const pyProgram = spawn(runner, [`-s ${service} ${pid}`], { shell: true });
   pyProgram.on('exit', async (code, signal) => {
     let data;
-    if (code == 0) {
+    if (code == 0 || true) {
       data = JSON.parse(
         await readFile(
           new URL('./specific_export.json', import.meta.url)
@@ -94,7 +93,7 @@ app.post("/manual-query", (req, res) => {
     const response = {
       code,
       signal,
-      specific_diagnostic: data,
+      diagnostics: data,
     };
 
     //Log request and respond
@@ -117,7 +116,7 @@ app.get("/supported-pids", async (_req, res) => {
   let response = await getSupportedPids();
 
   // Log request and respond TODO Put inside of program exit handler
-  logHistory({ endpoint: "/history", requestTime, responseTime: new Date(), response });
+  logHistory({ endpoint: "/supported-pids", requestTime, responseTime: new Date(), response });
   res.end(JSON.stringify(response));
 });
 
@@ -164,31 +163,13 @@ async function getHistory(data) {
     });
 };
 
-async function logSupportedPids(data) {
-  data = data.map(val => val.name);
-  return pool.getConnection()
-    .then(conn => {
-      conn.query(`
-      TRUNCATE ActivePIDS;
-      INSERT INTO ActivePIDS (Description)
-      VALUES ${data.map(val => `("${val}")`).join(',')}`)
-        .then(res => {
-          console.log(res);
-          conn.end();
-        })
-        .catch(err => {
-          console.error(err);
-          conn.end();
-        });
-    });
-}
-
 async function getSupportedPids() {
   return pool.getConnection()
     .then(async conn => {
       return conn.query(`
-      SELECT pid.Description, 'pid.PID (hex)' FROM PIDS pid
-      INNER JOIN ActivePIDS ap on ap.Description=pid.Description;`)
+      SELECT \`Mode (hex)\` service, \`PID (hex)\` pid, p.Description
+      FROM PIDS p
+      INNER JOIN ActivePIDS ap on p.Description=ap.Description;`)
         .then(rows => {
           conn.end();
           return { Success: true, rows };
