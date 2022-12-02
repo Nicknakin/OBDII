@@ -3,4 +3,4 @@ liquibase.properties
 config.json
 export_data.json
 log.txt
-specific_data.json
+specific_export.json
