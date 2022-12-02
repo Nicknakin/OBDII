@@ -200,7 +200,7 @@ if(REPORT):
                                 time.sleep(0.05)
                                 for i in range(0, 2):
                                     time.sleep(0.5)
-                                    response = bus.recv(timeout=2)
+                                    response = bus.recv(timeout=0.2)
                                     if not response:
                                         message = "No response from CAN bus. Service: {} PID: {} - {}".format(service_id.zfill(2), pid.zfill(2), description)
                                         _output_message(message)
