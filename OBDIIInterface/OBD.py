@@ -105,7 +105,7 @@ cmd = "chmod u+x can_startup.sh"
 modifier = os.system(cmd)
 startup = os.system("./can_startup.sh")
 print("Starting CAN bus {}\t{}".format(modifier,startup))
-bus = can.interface.Bus(channel='can0', bustype='socketcan',fd=True)
+bus = can.interface.Bus(channel='can0', bustype='socketcan')
 
 
 #notifier = can.Notifier(bus, [can.Printer()])
