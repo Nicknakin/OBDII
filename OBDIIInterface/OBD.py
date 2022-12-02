@@ -245,8 +245,8 @@ if(REPORT):
                                                 #exfiltrate_data(form_msg)
                                             except:
                                                 _output_message("Unable to parse response: {}.".format(response.data))
-                            except can.CanError:
-                                _output_message("CAN error")
+                            except can.CanError as e:
+                                _output_message("CAN error: {}".format(e))
 
                 end = time.time()
                 hours, rem = divmod(end - start, 3600)
@@ -280,8 +280,8 @@ if(GET):
             _output_message("DTC: {} {} {} {} {}".format(DTC_class,A,B,C,D))
             data_log = (DTC_class,A,B,C,D)
             exfiltrate_data(data_log)
-    except can.CanError:
-        _output_message("CAN Error while getting DTCs")
+    except can.CanError as e:
+        _output_message("CAN error: {}".format(e))
 
 
 if(CLEAR):
@@ -306,8 +306,8 @@ if(CLEAR):
                 D = list(response.data)[6]
                 _output_message("Recieved: {} {} {} {} {}\n".format(received_pid,A,B,C,D))
                 break
-        except can.CanError:
-            _output_message("CAN Error while clearing DTCs")
+        except can.CanError as e:
+            _output_message("CAN error: {}".format(e))
 
 
 if(SPECIFIC):
@@ -382,6 +382,6 @@ if(SPECIFIC):
                         #exfiltrate_data(form_msg)
                     except:
                         _output_message("Unable to parse response: {}.".format(response.data))
-    except can.CanError:
-        _output_message("CAN error")
+    except can.CanError as e:
+        _output_message("CAN error: {}".format(e))
     exfiltrate_data(output_list,'specific_export.json')
