@@ -40,7 +40,6 @@ app.get("/full-dump", (req, res) => {
           new URL('./export_data.json', import.meta.url)
         )
       );
-      logSupportedPids(data);
     }
 
     //Construct response object
@@ -163,25 +162,6 @@ async function getHistory(data) {
         });
     });
 };
-
-async function logSupportedPids(data) {
-  data = data.map(val => val.name);
-  return pool.getConnection()
-    .then(conn => {
-      conn.query(`
-      TRUNCATE ActivePIDS;
-      INSERT INTO ActivePIDS (Description)
-      VALUES ${data.map(val => `("${val}")`).join(',')}`)
-        .then(res => {
-          console.log(res);
-          conn.end();
-        })
-        .catch(err => {
-          console.error(err);
-          conn.end();
-        });
-    });
-}
 
 async function getSupportedPids() {
   return pool.getConnection()
